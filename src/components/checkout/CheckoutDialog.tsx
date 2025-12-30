@@ -1,0 +1,207 @@
+import React, { useState } from 'react';
+import { MapPin, Phone, MessageSquare, Truck, UtensilsCrossed, ShoppingBag } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useCart } from '@/context/CartContext';
+import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
+
+interface CheckoutDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onComplete: () => void;
+}
+
+type DeliveryType = 'dine-in' | 'takeaway' | 'delivery';
+
+const CheckoutDialog: React.FC<CheckoutDialogProps> = ({ isOpen, onClose, onComplete }) => {
+  const { items, totalPrice, clearCart } = useCart();
+  const [deliveryType, setDeliveryType] = useState<DeliveryType>('dine-in');
+  const [phone, setPhone] = useState('');
+  const [tableNumber, setTableNumber] = useState('');
+  const [address, setAddress] = useState('');
+  const [specialRequests, setSpecialRequests] = useState('');
+
+  const finalTotal = totalPrice + Math.round(totalPrice * 0.05) + (deliveryType === 'delivery' ? 50 : 0);
+
+  const handleSubmit = () => {
+    if (!phone) {
+      toast.error('Please enter your phone number');
+      return;
+    }
+    if (deliveryType === 'dine-in' && !tableNumber) {
+      toast.error('Please enter your table number');
+      return;
+    }
+    if (deliveryType === 'delivery' && !address) {
+      toast.error('Please enter your delivery address');
+      return;
+    }
+
+    // Create WhatsApp message
+    const orderItems = items.map(item => 
+      `• ${item.quantity}x ${item.name} - ₹${item.price * item.quantity}${item.specialInstructions ? ` (${item.specialInstructions})` : ''}`
+    ).join('\n');
+
+    const message = encodeURIComponent(
+      `🍽️ *New Order*\n\n` +
+      `📋 *Order Details:*\n${orderItems}\n\n` +
+      `💰 *Total:* ₹${finalTotal}\n` +
+      `📍 *Type:* ${deliveryType === 'dine-in' ? `Dine-in (Table ${tableNumber})` : deliveryType === 'takeaway' ? 'Takeaway' : `Delivery to ${address}`}\n` +
+      `📞 *Phone:* ${phone}` +
+      (specialRequests ? `\n📝 *Notes:* ${specialRequests}` : '')
+    );
+
+    window.open(`https://wa.me/919999999999?text=${message}`, '_blank');
+    
+    clearCart();
+    onComplete();
+    toast.success('Order placed successfully! Check WhatsApp for confirmation.');
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-lg bg-background border-border max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="font-display text-2xl">Checkout</DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-6 py-4">
+          {/* Delivery Type */}
+          <div className="space-y-3">
+            <label className="text-sm font-medium">How would you like your order?</label>
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { type: 'dine-in' as const, icon: UtensilsCrossed, label: 'Dine-in' },
+                { type: 'takeaway' as const, icon: ShoppingBag, label: 'Takeaway' },
+                { type: 'delivery' as const, icon: Truck, label: 'Delivery' },
+              ].map(({ type, icon: Icon, label }) => (
+                <button
+                  key={type}
+                  onClick={() => setDeliveryType(type)}
+                  className={cn(
+                    "flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all",
+                    deliveryType === type
+                      ? "border-gold bg-gold/10 text-gold"
+                      : "border-border bg-secondary text-muted-foreground hover:border-gold/50"
+                  )}
+                >
+                  <Icon className="w-6 h-6" />
+                  <span className="text-sm font-medium">{label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Phone Number */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium flex items-center gap-2">
+              <Phone className="w-4 h-4 text-gold" />
+              Phone Number
+            </label>
+            <Input
+              type="tel"
+              placeholder="+91 98765 43210"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="bg-secondary border-border"
+            />
+          </div>
+
+          {/* Table Number (for Dine-in) */}
+          {deliveryType === 'dine-in' && (
+            <div className="space-y-2 animate-fade-in">
+              <label className="text-sm font-medium">Table Number</label>
+              <Input
+                type="text"
+                placeholder="Enter your table number"
+                value={tableNumber}
+                onChange={(e) => setTableNumber(e.target.value)}
+                className="bg-secondary border-border"
+              />
+            </div>
+          )}
+
+          {/* Address (for Delivery) */}
+          {deliveryType === 'delivery' && (
+            <div className="space-y-2 animate-fade-in">
+              <label className="text-sm font-medium flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-gold" />
+                Delivery Address
+              </label>
+              <Textarea
+                placeholder="Enter your full address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                className="bg-secondary border-border resize-none"
+                rows={3}
+              />
+            </div>
+          )}
+
+          {/* Special Requests */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium flex items-center gap-2">
+              <MessageSquare className="w-4 h-4 text-gold" />
+              Special Requests (Optional)
+            </label>
+            <Textarea
+              placeholder="Any special requests for the kitchen..."
+              value={specialRequests}
+              onChange={(e) => setSpecialRequests(e.target.value)}
+              className="bg-secondary border-border resize-none"
+              rows={2}
+            />
+          </div>
+
+          {/* Order Summary */}
+          <div className="bg-secondary rounded-xl p-4 space-y-3">
+            <h4 className="font-medium">Order Summary</h4>
+            {items.map((item) => (
+              <div key={item.id} className="flex justify-between text-sm">
+                <span className="text-muted-foreground">
+                  {item.quantity}x {item.name}
+                </span>
+                <span>₹{item.price * item.quantity}</span>
+              </div>
+            ))}
+            <div className="border-t border-border pt-2 space-y-1">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Subtotal</span>
+                <span>₹{totalPrice}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Taxes (5%)</span>
+                <span>₹{Math.round(totalPrice * 0.05)}</span>
+              </div>
+              {deliveryType === 'delivery' && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Delivery Fee</span>
+                  <span>₹50</span>
+                </div>
+              )}
+              <div className="flex justify-between font-semibold text-lg pt-2 border-t border-border">
+                <span>Total</span>
+                <span className="text-gold">₹{finalTotal}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Place Order Button */}
+          <Button
+            variant="gold"
+            size="xl"
+            className="w-full"
+            onClick={handleSubmit}
+          >
+            Place Order via WhatsApp
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default CheckoutDialog;
