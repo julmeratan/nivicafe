@@ -71,11 +71,7 @@ const AdminDashboard: React.FC = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [tables, setTables] = useState<TableData[]>([]);
 
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate('/admin/login');
-    }
-  }, [user, loading, navigate]);
+  // Auth check is now handled by ProtectedRoute - no need for client-side redirect
 
   useEffect(() => {
     fetchDashboardData();
