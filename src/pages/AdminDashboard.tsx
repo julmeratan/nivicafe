@@ -12,6 +12,7 @@ import {
   QrCode,
   ChefHat,
   UtensilsCrossed,
+  UserCog,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -19,9 +20,10 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import QRCodeDisplay from '@/components/qr/QRCodeDisplay';
 import MenuManagement from '@/components/admin/MenuManagement';
+import UserRoleManagement from '@/components/admin/UserRoleManagement';
 import { cn } from '@/lib/utils';
 
-type TabType = 'overview' | 'orders' | 'menu' | 'customers' | 'tables';
+type TabType = 'overview' | 'orders' | 'menu' | 'customers' | 'tables' | 'users';
 
 interface DashboardStats {
   totalOrders: number;
@@ -139,6 +141,7 @@ const AdminDashboard: React.FC = () => {
     { id: 'menu' as const, label: 'Menu', icon: UtensilsCrossed },
     { id: 'customers' as const, label: 'Customers', icon: Users },
     { id: 'tables' as const, label: 'QR Codes', icon: QrCode },
+    { id: 'users' as const, label: 'User Roles', icon: UserCog },
   ];
 
   const getStatusColor = (status: string) => {
@@ -383,6 +386,8 @@ const AdminDashboard: React.FC = () => {
             </div>
           </div>
         )}
+
+        {activeTab === 'users' && <UserRoleManagement />}
       </div>
     </div>
   );
