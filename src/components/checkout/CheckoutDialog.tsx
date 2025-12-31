@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MapPin, Phone, MessageSquare, Truck, UtensilsCrossed, ShoppingBag } from 'lucide-react';
+import { MapPin, Phone, MessageSquare, Truck, UtensilsCrossed, ShoppingBag, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -7,31 +7,36 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { useCart } from '@/context/CartContext';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 interface CheckoutDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onComplete: () => void;
+  onComplete: (orderId: string, total: number) => void;
+  tableNumber?: string;
 }
 
-type DeliveryType = 'dine-in' | 'takeaway' | 'delivery';
+type DeliveryType = 'dine_in' | 'takeaway' | 'delivery';
 
-const CheckoutDialog: React.FC<CheckoutDialogProps> = ({ isOpen, onClose, onComplete }) => {
+const CheckoutDialog: React.FC<CheckoutDialogProps> = ({ isOpen, onClose, onComplete, tableNumber: initialTableNumber }) => {
   const { items, totalPrice, clearCart } = useCart();
-  const [deliveryType, setDeliveryType] = useState<DeliveryType>('dine-in');
+  const [deliveryType, setDeliveryType] = useState<DeliveryType>('dine_in');
   const [phone, setPhone] = useState('');
-  const [tableNumber, setTableNumber] = useState('');
+  const [tableNumber, setTableNumber] = useState(initialTableNumber || '');
   const [address, setAddress] = useState('');
   const [specialRequests, setSpecialRequests] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const finalTotal = totalPrice + Math.round(totalPrice * 0.05) + (deliveryType === 'delivery' ? 50 : 0);
+  const tax = Math.round(totalPrice * 0.05);
+  const deliveryFee = deliveryType === 'delivery' ? 50 : 0;
+  const finalTotal = totalPrice + tax + deliveryFee;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!phone) {
       toast.error('Please enter your phone number');
       return;
     }
-    if (deliveryType === 'dine-in' && !tableNumber) {
+    if (deliveryType === 'dine_in' && !tableNumber) {
       toast.error('Please enter your table number');
       return;
     }
@@ -40,25 +45,101 @@ const CheckoutDialog: React.FC<CheckoutDialogProps> = ({ isOpen, onClose, onComp
       return;
     }
 
-    // Create WhatsApp message
-    const orderItems = items.map(item => 
-      `• ${item.quantity}x ${item.name} - ₹${item.price * item.quantity}${item.specialInstructions ? ` (${item.specialInstructions})` : ''}`
-    ).join('\n');
+    setIsSubmitting(true);
 
-    const message = encodeURIComponent(
-      `🍽️ *New Order*\n\n` +
-      `📋 *Order Details:*\n${orderItems}\n\n` +
-      `💰 *Total:* ₹${finalTotal}\n` +
-      `📍 *Type:* ${deliveryType === 'dine-in' ? `Dine-in (Table ${tableNumber})` : deliveryType === 'takeaway' ? 'Takeaway' : `Delivery to ${address}`}\n` +
-      `📞 *Phone:* ${phone}` +
-      (specialRequests ? `\n📝 *Notes:* ${specialRequests}` : '')
-    );
+    try {
+      // Create or get customer
+      const { data: existingCustomer } = await supabase
+        .from('customers')
+        .select('id')
+        .eq('phone_number', phone)
+        .maybeSingle();
 
-    window.open(`https://wa.me/919999999999?text=${message}`, '_blank');
-    
-    clearCart();
-    onComplete();
-    toast.success('Order placed successfully! Check WhatsApp for confirmation.');
+      let customerId = existingCustomer?.id;
+
+      if (!customerId) {
+        const { data: newCustomer, error: customerError } = await supabase
+          .from('customers')
+          .insert({ phone_number: phone })
+          .select('id')
+          .single();
+
+        if (customerError) throw customerError;
+        customerId = newCustomer.id;
+      }
+
+      // Get table ID if dine-in
+      let tableId = null;
+      if (deliveryType === 'dine_in' && tableNumber) {
+        const { data: tableData } = await supabase
+          .from('tables')
+          .select('id')
+          .eq('table_number', parseInt(tableNumber))
+          .maybeSingle();
+        tableId = tableData?.id;
+      }
+
+      // Create order - trigger generates order_number but we need to provide a placeholder
+      const { data: order, error: orderError } = await supabase
+        .from('orders')
+        .insert({
+          order_number: `ORD-${Date.now()}`, // Will be overwritten by trigger
+          customer_id: customerId,
+          table_id: tableId,
+          delivery_type: deliveryType,
+          subtotal: totalPrice,
+          tax: tax,
+          delivery_fee: deliveryFee,
+          total: finalTotal,
+          special_instructions: specialRequests || null,
+          delivery_address: deliveryType === 'delivery' ? address : null,
+          phone_number: phone,
+        } as any)
+        .select()
+        .single();
+
+      if (orderError) throw orderError;
+
+      // Create order items
+      const orderItems = items.map((item) => ({
+        order_id: order.id,
+        item_name: item.name,
+        item_price: item.price,
+        quantity: item.quantity,
+        special_instructions: item.specialInstructions || null,
+      }));
+
+      const { error: itemsError } = await supabase
+        .from('order_items')
+        .insert(orderItems);
+
+      if (itemsError) throw itemsError;
+
+      // Send WhatsApp notification
+      const orderItemsText = items
+        .map((item) => `• ${item.quantity}x ${item.name} - ₹${item.price * item.quantity}`)
+        .join('\n');
+
+      const message = encodeURIComponent(
+        `🍽️ *New Order - ${order.order_number}*\n\n` +
+        `📋 *Items:*\n${orderItemsText}\n\n` +
+        `💰 *Total:* ₹${finalTotal}\n` +
+        `📍 *Type:* ${deliveryType === 'dine_in' ? `Dine-in (Table ${tableNumber})` : deliveryType === 'takeaway' ? 'Takeaway' : `Delivery to ${address}`}\n` +
+        `📞 *Phone:* ${phone}` +
+        (specialRequests ? `\n📝 *Notes:* ${specialRequests}` : '')
+      );
+
+      window.open(`https://wa.me/919999999999?text=${message}`, '_blank');
+
+      clearCart();
+      toast.success('Order placed successfully!');
+      onComplete(order.id, finalTotal);
+    } catch (error) {
+      console.error('Order error:', error);
+      toast.error('Failed to place order. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -74,7 +155,7 @@ const CheckoutDialog: React.FC<CheckoutDialogProps> = ({ isOpen, onClose, onComp
             <label className="text-sm font-medium">How would you like your order?</label>
             <div className="grid grid-cols-3 gap-3">
               {[
-                { type: 'dine-in' as const, icon: UtensilsCrossed, label: 'Dine-in' },
+                { type: 'dine_in' as const, icon: UtensilsCrossed, label: 'Dine-in' },
                 { type: 'takeaway' as const, icon: ShoppingBag, label: 'Takeaway' },
                 { type: 'delivery' as const, icon: Truck, label: 'Delivery' },
               ].map(({ type, icon: Icon, label }) => (
@@ -99,7 +180,7 @@ const CheckoutDialog: React.FC<CheckoutDialogProps> = ({ isOpen, onClose, onComp
           <div className="space-y-2">
             <label className="text-sm font-medium flex items-center gap-2">
               <Phone className="w-4 h-4 text-gold" />
-              Phone Number
+              Phone Number (WhatsApp)
             </label>
             <Input
               type="tel"
@@ -111,7 +192,7 @@ const CheckoutDialog: React.FC<CheckoutDialogProps> = ({ isOpen, onClose, onComp
           </div>
 
           {/* Table Number (for Dine-in) */}
-          {deliveryType === 'dine-in' && (
+          {deliveryType === 'dine_in' && (
             <div className="space-y-2 animate-fade-in">
               <label className="text-sm font-medium">Table Number</label>
               <Input
@@ -174,7 +255,7 @@ const CheckoutDialog: React.FC<CheckoutDialogProps> = ({ isOpen, onClose, onComp
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Taxes (5%)</span>
-                <span>₹{Math.round(totalPrice * 0.05)}</span>
+                <span>₹{tax}</span>
               </div>
               {deliveryType === 'delivery' && (
                 <div className="flex justify-between text-sm">
@@ -195,8 +276,16 @@ const CheckoutDialog: React.FC<CheckoutDialogProps> = ({ isOpen, onClose, onComp
             size="xl"
             className="w-full"
             onClick={handleSubmit}
+            disabled={isSubmitting}
           >
-            Place Order via WhatsApp
+            {isSubmitting ? (
+              <>
+                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                Placing Order...
+              </>
+            ) : (
+              'Place Order via WhatsApp'
+            )}
           </Button>
         </div>
       </DialogContent>
