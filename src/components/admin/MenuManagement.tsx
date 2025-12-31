@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, Pencil, Trash2, X, Check, Loader2 } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Plus, Pencil, Trash2, X, Check, Loader2, Upload, Image as ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -78,6 +78,9 @@ const MenuManagement: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [filterCategory, setFilterCategory] = useState<string>('all');
+  const [uploading, setUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchMenuItems();
@@ -104,6 +107,7 @@ const MenuManagement: React.FC = () => {
   const openAddDialog = () => {
     setEditingItem(null);
     setFormData(initialFormState);
+    setImagePreview(null);
     setIsDialogOpen(true);
   };
 
@@ -121,7 +125,76 @@ const MenuManagement: React.FC = () => {
       prep_time: item.prep_time || '',
       serves: item.serves || '',
     });
+    setImagePreview(item.image_url || null);
     setIsDialogOpen(true);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please upload an image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image must be less than 5MB');
+      return;
+    }
+
+    setUploading(true);
+
+    try {
+      // Create unique filename
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = `menu/${fileName}`;
+
+      // Upload to storage
+      const { error: uploadError } = await supabase.storage
+        .from('menu-images')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('menu-images')
+        .getPublicUrl(filePath);
+
+      setFormData({ ...formData, image_url: publicUrl });
+      setImagePreview(publicUrl);
+      toast.success('Image uploaded successfully');
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast.error('Failed to upload image');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removeImage = async () => {
+    if (formData.image_url && formData.image_url.includes('menu-images')) {
+      try {
+        // Extract file path from URL
+        const urlParts = formData.image_url.split('/menu-images/');
+        if (urlParts[1]) {
+          await supabase.storage
+            .from('menu-images')
+            .remove([urlParts[1]]);
+        }
+      } catch (error) {
+        console.error('Error removing old image:', error);
+      }
+    }
+    setFormData({ ...formData, image_url: '' });
+    setImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -492,15 +565,71 @@ const MenuManagement: React.FC = () => {
                 </Select>
               </div>
 
-              <div>
-                <Label htmlFor="image_url">Image URL</Label>
-                <Input
-                  id="image_url"
-                  value={formData.image_url}
-                  onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                  placeholder="https://..."
-                  className="bg-background border-border mt-1"
-                />
+              <div className="col-span-2">
+                <Label>Menu Image</Label>
+                <div className="mt-2 space-y-3">
+                  {imagePreview ? (
+                    <div className="relative inline-block">
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        className="w-32 h-32 object-cover rounded-lg border border-border"
+                      />
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="destructive"
+                        onClick={removeImage}
+                        className="absolute -top-2 -right-2 h-6 w-6"
+                      >
+                        <X className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <div
+                      onClick={() => fileInputRef.current?.click()}
+                      className="w-32 h-32 border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-gold/50 transition-colors"
+                    >
+                      {uploading ? (
+                        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                      ) : (
+                        <>
+                          <ImageIcon className="w-8 h-8 text-muted-foreground mb-1" />
+                          <span className="text-xs text-muted-foreground">Upload</span>
+                        </>
+                      )}
+                    </div>
+                  )}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                  />
+                  <div className="flex items-center gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploading}
+                    >
+                      {uploading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Uploading...
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="w-4 h-4 mr-2" />
+                          {imagePreview ? 'Change Image' : 'Upload Image'}
+                        </>
+                      )}
+                    </Button>
+                    <span className="text-xs text-muted-foreground">Max 5MB</span>
+                  </div>
+                </div>
               </div>
 
               <div className="flex items-center justify-between p-4 bg-background rounded-lg">
