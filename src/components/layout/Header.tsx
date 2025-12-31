@@ -1,5 +1,6 @@
 import React from 'react';
-import { Search, Star } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Search, Star, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface HeaderProps {
@@ -34,6 +35,15 @@ const Header: React.FC<HeaderProps> = ({
             >
               <Star className="w-4 h-4" />
               <span className="hidden sm:inline">Rate Us</span>
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="icon"
+              asChild
+            >
+              <Link to="/admin/login">
+                <Settings className="w-5 h-5" />
+              </Link>
             </Button>
           </div>
         </div>
