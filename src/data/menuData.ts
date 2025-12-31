@@ -35,11 +35,12 @@ import mexicanTacos from '@/assets/mexican-tacos.jpg';
 import tiramisu from '@/assets/tiramisu.jpg';
 import chocolateLavaCake from '@/assets/chocolate-lava-cake.jpg';
 
-// Auto-fixed dish-accurate images
+// Auto-fixed dish-accurate images - Batch 1 (Veg Starters)
 import beetrootGoatCheese from '@/assets/beetroot-goat-cheese.jpg';
 import paneerSteak from '@/assets/paneer-steak.jpg';
 import broccoliAlmond from '@/assets/broccoli-almond.jpg';
 
+// Auto-fixed dish-accurate images - Batch 2 (Non-Veg Starters)
 import periPeriChicken from '@/assets/peri-peri-chicken.jpg';
 import turkishShishKebab from '@/assets/turkish-shish-kebab.jpg';
 import cajunChicken from '@/assets/cajun-chicken.jpg';
@@ -51,6 +52,7 @@ import pepperCrustedFish from '@/assets/pepper-crusted-fish.jpg';
 import thaiSpicedPrawns from '@/assets/thai-spiced-prawns.jpg';
 import bbqLambBites from '@/assets/bbq-lamb-bites.jpg';
 
+// Auto-fixed dish-accurate images - Batch 3 (Veg Mains)
 import arrabbiataPasta from '@/assets/arrabbiata-pasta.jpg';
 import pestoPastaImg from '@/assets/pesto-pasta.jpg';
 import ratatouilleImg from '@/assets/ratatouille.jpg';
@@ -58,6 +60,40 @@ import mushroomStroganoff from '@/assets/mushroom-stroganoff.jpg';
 import vegetablePaella from '@/assets/vegetable-paella.jpg';
 import mexicanBurritoBowl from '@/assets/mexican-burrito-bowl.jpg';
 import mediterraneanCasserole from '@/assets/mediterranean-casserole.jpg';
+
+// Auto-fixed dish-accurate images - Batch 4 (Non-Veg Mains)
+import chickenParmesan from '@/assets/chicken-parmesan.jpg';
+import thaiRedCurryChicken from '@/assets/thai-red-curry-chicken.jpg';
+import thaiGreenCurryChicken from '@/assets/thai-green-curry-chicken.jpg';
+import moroccanTagine from '@/assets/moroccan-tagine.jpg';
+import koreanBbqChicken from '@/assets/korean-bbq-chicken.jpg';
+import teriyakiChicken from '@/assets/teriyaki-chicken.jpg';
+import roastChicken from '@/assets/roast-chicken.jpg';
+import lambBourguignon from '@/assets/lamb-bourguignon.jpg';
+import butterGarlicPrawnsMain from '@/assets/butter-garlic-prawns-main.jpg';
+import lemonPepperFish from '@/assets/lemon-pepper-fish.jpg';
+import grilledFishSteak from '@/assets/grilled-fish-steak.jpg';
+import bbqChickenPlatter from '@/assets/bbq-chicken-platter.jpg';
+import spicedLambStew from '@/assets/spiced-lamb-stew.jpg';
+
+// Auto-fixed dish-accurate images - Batch 5 (Live Counters)
+import lambBurger from '@/assets/lamb-burger.jpg';
+import freshPastaCounter from '@/assets/fresh-pasta-counter.jpg';
+import mexicanTacosVeg from '@/assets/mexican-tacos-veg.jpg';
+import stuffedQuesadillas from '@/assets/stuffed-quesadillas.jpg';
+import macAndCheese from '@/assets/mac-and-cheese.jpg';
+import flatbreadWraps from '@/assets/flatbread-wraps.jpg';
+
+// Auto-fixed dish-accurate images - Batch 6 (Breads & Sides)
+import mashedPotatoes from '@/assets/mashed-potatoes.jpg';
+import herbRice from '@/assets/herb-rice.jpg';
+import butteredCorn from '@/assets/buttered-corn.jpg';
+import roastedVegetables from '@/assets/roasted-vegetables.jpg';
+import sauteedGreens from '@/assets/sauteed-greens.jpg';
+import coleslaw from '@/assets/coleslaw.jpg';
+import potatoWedges from '@/assets/potato-wedges.jpg';
+import frenchFries from '@/assets/french-fries.jpg';
+import grilledCorn from '@/assets/grilled-corn.jpg';
 
 import type { MenuItem, Category } from '@/types/menu';
 
@@ -774,7 +810,7 @@ export const menuItems: MenuItem[] = [
     name: 'Chicken Parmesan',
     description: 'Breaded chicken cutlet topped with marinara and melted mozzarella.',
     price: 400,
-    image: butterChicken,
+    image: chickenParmesan,
     category: 'nonveg-mains',
     servings: 'Serves 1',
     spiceLevel: 'mild',
@@ -788,7 +824,7 @@ export const menuItems: MenuItem[] = [
     name: 'Thai Red Curry Chicken',
     description: 'Spicy red curry with tender chicken, bamboo shoots, and basil.',
     price: 380,
-    image: butterChicken,
+    image: thaiRedCurryChicken,
     category: 'nonveg-mains',
     servings: 'Serves 1',
     spiceLevel: 'hot',
@@ -802,7 +838,7 @@ export const menuItems: MenuItem[] = [
     name: 'Thai Green Curry Chicken',
     description: 'Aromatic green curry with chicken, eggplant, and Thai basil.',
     price: 380,
-    image: butterChicken,
+    image: thaiGreenCurryChicken,
     category: 'nonveg-mains',
     servings: 'Serves 1',
     spiceLevel: 'medium',
@@ -816,7 +852,7 @@ export const menuItems: MenuItem[] = [
     name: 'Moroccan Chicken Tagine',
     description: 'Slow-cooked chicken with preserved lemons, olives, and spices.',
     price: 420,
-    image: butterChicken,
+    image: moroccanTagine,
     category: 'nonveg-mains',
     servings: 'Serves 1',
     spiceLevel: 'medium',
@@ -830,7 +866,7 @@ export const menuItems: MenuItem[] = [
     name: 'Korean BBQ Chicken',
     description: 'Grilled chicken with gochujang glaze, kimchi, and pickled radish.',
     price: 400,
-    image: butterChicken,
+    image: koreanBbqChicken,
     category: 'nonveg-mains',
     servings: 'Serves 1',
     spiceLevel: 'hot',
@@ -844,7 +880,7 @@ export const menuItems: MenuItem[] = [
     name: 'Teriyaki Chicken',
     description: 'Grilled chicken glazed with sweet teriyaki sauce and sesame.',
     price: 360,
-    image: butterChicken,
+    image: teriyakiChicken,
     category: 'nonveg-mains',
     servings: 'Serves 1',
     spiceLevel: 'mild',
@@ -858,7 +894,7 @@ export const menuItems: MenuItem[] = [
     name: 'Roast Chicken with Herbs',
     description: 'Oven-roasted half chicken with rosemary, thyme, and pan gravy.',
     price: 450,
-    image: butterChicken,
+    image: roastChicken,
     category: 'nonveg-mains',
     servings: 'Serves 1-2',
     spiceLevel: 'mild',
@@ -886,7 +922,7 @@ export const menuItems: MenuItem[] = [
     name: 'Lamb Bourguignon',
     description: 'French-style lamb stew with red wine, mushrooms, and pearl onions.',
     price: 580,
-    image: butterChicken,
+    image: lambBourguignon,
     category: 'nonveg-mains',
     servings: 'Serves 1',
     spiceLevel: 'mild',
@@ -900,7 +936,7 @@ export const menuItems: MenuItem[] = [
     name: 'Butter Garlic Prawns',
     description: 'Jumbo prawns in butter garlic sauce with herb rice.',
     price: 520,
-    image: butterChicken,
+    image: butterGarlicPrawnsMain,
     category: 'nonveg-mains',
     servings: 'Serves 1',
     spiceLevel: 'mild',
@@ -914,7 +950,7 @@ export const menuItems: MenuItem[] = [
     name: 'Lemon Pepper Fish',
     description: 'Pan-seared fish with lemon butter sauce and capers.',
     price: 420,
-    image: butterChicken,
+    image: lemonPepperFish,
     category: 'nonveg-mains',
     servings: 'Serves 1',
     spiceLevel: 'mild',
@@ -928,7 +964,7 @@ export const menuItems: MenuItem[] = [
     name: 'Grilled Fish Steak',
     description: 'Fresh fish steak grilled with Mediterranean herbs and olive oil.',
     price: 450,
-    image: butterChicken,
+    image: grilledFishSteak,
     category: 'nonveg-mains',
     servings: 'Serves 1',
     spiceLevel: 'mild',
@@ -942,7 +978,7 @@ export const menuItems: MenuItem[] = [
     name: 'BBQ Chicken Platter',
     description: 'Assorted BBQ chicken pieces with coleslaw and corn on the cob.',
     price: 480,
-    image: butterChicken,
+    image: bbqChickenPlatter,
     category: 'nonveg-mains',
     servings: 'Serves 2',
     spiceLevel: 'medium',
@@ -956,7 +992,7 @@ export const menuItems: MenuItem[] = [
     name: 'Spiced Lamb Stew',
     description: 'Tender lamb slow-cooked with aromatic spices and root vegetables.',
     price: 520,
-    image: butterChicken,
+    image: spicedLambStew,
     category: 'nonveg-mains',
     servings: 'Serves 1',
     spiceLevel: 'medium',
@@ -1042,7 +1078,7 @@ export const menuItems: MenuItem[] = [
     name: 'Lamb Burger',
     description: 'Juicy lamb patty with feta, tzatziki, and pickled red onions.',
     price: 420,
-    image: heroBiryani,
+    image: lambBurger,
     category: 'live-counters',
     servings: 'Serves 1',
     spiceLevel: 'medium',
@@ -1056,7 +1092,7 @@ export const menuItems: MenuItem[] = [
     name: 'Fresh Pasta Live Counter',
     description: 'Choose your pasta, sauce, and toppings made fresh at the counter.',
     price: 350,
-    image: heroBiryani,
+    image: freshPastaCounter,
     category: 'live-counters',
     servings: 'Serves 1',
     spiceLevel: 'mild',
@@ -1070,7 +1106,7 @@ export const menuItems: MenuItem[] = [
     name: 'Mexican Soft Tacos (Veg)',
     description: 'Three soft tacos with refried beans, guacamole, and pico de gallo.',
     price: 280,
-    image: heroBiryani,
+    image: mexicanTacosVeg,
     category: 'live-counters',
     servings: '3 pieces',
     spiceLevel: 'medium',
@@ -1098,7 +1134,7 @@ export const menuItems: MenuItem[] = [
     name: 'Stuffed Quesadillas',
     description: 'Crispy tortillas filled with cheese, peppers, and your choice of filling.',
     price: 300,
-    image: heroBiryani,
+    image: stuffedQuesadillas,
     category: 'live-counters',
     servings: 'Serves 1',
     spiceLevel: 'mild',
@@ -1154,7 +1190,7 @@ export const menuItems: MenuItem[] = [
     name: 'Baked Mac & Cheese',
     description: 'Creamy macaroni with three cheeses, baked with a golden crust.',
     price: 300,
-    image: heroBiryani,
+    image: macAndCheese,
     category: 'live-counters',
     servings: 'Serves 1',
     spiceLevel: 'mild',
@@ -1168,7 +1204,7 @@ export const menuItems: MenuItem[] = [
     name: 'Flatbread Wraps',
     description: 'Fresh wraps with your choice of filling, veggies, and sauces.',
     price: 260,
-    image: heroBiryani,
+    image: flatbreadWraps,
     category: 'live-counters',
     servings: 'Serves 1',
     spiceLevel: 'mild',
@@ -1422,7 +1458,7 @@ export const menuItems: MenuItem[] = [
     name: 'Mashed Potatoes',
     description: 'Creamy whipped potatoes with butter.',
     price: 120,
-    image: dalMakhani,
+    image: mashedPotatoes,
     category: 'breads',
     servings: 'Serves 1',
     spiceLevel: 'mild',
@@ -1436,7 +1472,7 @@ export const menuItems: MenuItem[] = [
     name: 'Herb Rice',
     description: 'Fragrant basmati rice with fresh herbs.',
     price: 100,
-    image: heroBiryani,
+    image: herbRice,
     category: 'breads',
     servings: 'Serves 1',
     spiceLevel: 'mild',
@@ -1450,7 +1486,7 @@ export const menuItems: MenuItem[] = [
     name: 'Buttered Corn',
     description: 'Sweet corn kernels tossed in butter.',
     price: 80,
-    image: dalMakhani,
+    image: butteredCorn,
     category: 'breads',
     servings: 'Serves 1',
     spiceLevel: 'mild',
@@ -1464,7 +1500,7 @@ export const menuItems: MenuItem[] = [
     name: 'Roasted Vegetables',
     description: 'Seasonal vegetables roasted with olive oil and herbs.',
     price: 140,
-    image: dalMakhani,
+    image: roastedVegetables,
     category: 'breads',
     servings: 'Serves 1',
     spiceLevel: 'mild',
@@ -1478,7 +1514,7 @@ export const menuItems: MenuItem[] = [
     name: 'Sautéed Greens',
     description: 'Fresh greens sautéed with garlic.',
     price: 120,
-    image: dalMakhani,
+    image: sauteedGreens,
     category: 'breads',
     servings: 'Serves 1',
     spiceLevel: 'mild',
@@ -1492,7 +1528,7 @@ export const menuItems: MenuItem[] = [
     name: 'Coleslaw',
     description: 'Creamy cabbage slaw with carrots.',
     price: 80,
-    image: dalMakhani,
+    image: coleslaw,
     category: 'breads',
     servings: 'Serves 1',
     spiceLevel: 'mild',
@@ -1506,7 +1542,7 @@ export const menuItems: MenuItem[] = [
     name: 'Potato Wedges',
     description: 'Crispy seasoned potato wedges.',
     price: 140,
-    image: dalMakhani,
+    image: potatoWedges,
     category: 'breads',
     servings: 'Serves 2',
     spiceLevel: 'mild',
@@ -1520,7 +1556,7 @@ export const menuItems: MenuItem[] = [
     name: 'French Fries',
     description: 'Classic golden crispy fries.',
     price: 120,
-    image: dalMakhani,
+    image: frenchFries,
     category: 'breads',
     servings: 'Serves 2',
     spiceLevel: 'mild',
@@ -1534,7 +1570,7 @@ export const menuItems: MenuItem[] = [
     name: 'Grilled Corn on Cob',
     description: 'Char-grilled corn with butter and lime.',
     price: 100,
-    image: dalMakhani,
+    image: grilledCorn,
     category: 'breads',
     servings: '1 piece',
     spiceLevel: 'mild',
