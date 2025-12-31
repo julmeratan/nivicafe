@@ -115,24 +115,38 @@ const CheckoutDialog: React.FC<CheckoutDialogProps> = ({ isOpen, onClose, onComp
 
       if (itemsError) throw itemsError;
 
-      // Send WhatsApp notification
-      const orderItemsText = items
-        .map((item) => `• ${item.quantity}x ${item.name} - ₹${item.price * item.quantity}`)
-        .join('\n');
+      // Notify chef via WhatsApp edge function
+      try {
+        const notificationPayload = {
+          orderId: order.id,
+          orderNumber: order.order_number,
+          items: items.map((item) => ({
+            name: item.name,
+            quantity: item.quantity,
+            specialInstructions: item.specialInstructions,
+          })),
+          tableNumber: tableNumber ? parseInt(tableNumber) : undefined,
+          deliveryType: deliveryType,
+          total: finalTotal,
+          phoneNumber: phone,
+        };
 
-      const message = encodeURIComponent(
-        `🍽️ *New Order - ${order.order_number}*\n\n` +
-        `📋 *Items:*\n${orderItemsText}\n\n` +
-        `💰 *Total:* ₹${finalTotal}\n` +
-        `📍 *Type:* ${deliveryType === 'dine_in' ? `Dine-in (Table ${tableNumber})` : deliveryType === 'takeaway' ? 'Takeaway' : `Delivery to ${address}`}\n` +
-        `📞 *Phone:* ${phone}` +
-        (specialRequests ? `\n📝 *Notes:* ${specialRequests}` : '')
-      );
+        const { error: notifyError } = await supabase.functions.invoke('notify-chef-whatsapp', {
+          body: notificationPayload,
+        });
 
-      window.open(`https://wa.me/919999999999?text=${message}`, '_blank');
+        if (notifyError) {
+          console.error('Chef notification failed:', notifyError);
+          // Don't fail the order if notification fails
+        } else {
+          console.log('Chef notified via WhatsApp');
+        }
+      } catch (notifyErr) {
+        console.error('Error notifying chef:', notifyErr);
+      }
 
       clearCart();
-      toast.success('Order placed successfully!');
+      toast.success('Order placed successfully! Chef has been notified.');
       onComplete(order.id, finalTotal);
     } catch (error) {
       console.error('Order error:', error);
