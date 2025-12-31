@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Shield, Mail, Lock, Loader2 } from 'lucide-react';
+import { Shield, Mail, Lock, Loader2, UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/hooks/useAuth';
@@ -8,10 +8,11 @@ import { toast } from 'sonner';
 
 const AdminLogin: React.FC = () => {
   const navigate = useNavigate();
-  const { signIn } = useAuth();
+  const { signIn, signUp } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,21 +22,34 @@ const AdminLogin: React.FC = () => {
       return;
     }
 
+    if (password.length < 6) {
+      toast.error('Password must be at least 6 characters');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const { error } = await signIn(email, password);
-      
-      if (error) {
-        toast.error(error.message || 'Invalid credentials');
-        return;
+      if (isSignUp) {
+        const { error } = await signUp(email, password);
+        if (error) {
+          toast.error(error.message || 'Sign up failed');
+          return;
+        }
+        toast.success('Account created! Please contact admin to get access.');
+        setIsSignUp(false);
+      } else {
+        const { error } = await signIn(email, password);
+        if (error) {
+          toast.error(error.message || 'Invalid credentials');
+          return;
+        }
+        toast.success('Login successful!');
+        navigate('/admin');
       }
-
-      toast.success('Login successful!');
-      navigate('/admin');
     } catch (error) {
-      console.error('Login error:', error);
-      toast.error('Login failed. Please try again.');
+      console.error('Auth error:', error);
+      toast.error('Authentication failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -91,11 +105,22 @@ const AdminLogin: React.FC = () => {
             {isLoading ? (
               <>
                 <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                Signing in...
+                {isSignUp ? 'Creating account...' : 'Signing in...'}
               </>
             ) : (
-              'Sign In'
+              isSignUp ? 'Create Account' : 'Sign In'
             )}
+          </Button>
+
+          <Button
+            type="button"
+            variant="ghost"
+            className="w-full text-muted-foreground hover:text-foreground"
+            onClick={() => setIsSignUp(!isSignUp)}
+            disabled={isLoading}
+          >
+            <UserPlus className="w-4 h-4 mr-2" />
+            {isSignUp ? 'Already have an account? Sign in' : 'Need an account? Sign up'}
           </Button>
         </form>
 
