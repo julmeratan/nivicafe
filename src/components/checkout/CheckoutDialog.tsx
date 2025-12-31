@@ -8,6 +8,7 @@ import { useCart } from '@/context/CartContext';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { checkoutFormSchema, sanitizePhone, sanitizeText } from '@/lib/validation';
 
 interface CheckoutDialogProps {
   isOpen: boolean;
@@ -26,22 +27,41 @@ const CheckoutDialog: React.FC<CheckoutDialogProps> = ({ isOpen, onClose, onComp
   const [address, setAddress] = useState('');
   const [specialRequests, setSpecialRequests] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const tax = Math.round(totalPrice * 0.05);
   const deliveryFee = deliveryType === 'delivery' ? 50 : 0;
   const finalTotal = totalPrice + tax + deliveryFee;
 
+  const validateForm = (): boolean => {
+    const result = checkoutFormSchema.safeParse({
+      phone: sanitizePhone(phone),
+      deliveryType,
+      tableNumber: tableNumber.trim(),
+      address: address.trim(),
+      specialRequests: specialRequests.trim(),
+    });
+
+    if (!result.success) {
+      const newErrors: Record<string, string> = {};
+      result.error.errors.forEach((err) => {
+        const path = err.path[0] as string;
+        newErrors[path] = err.message;
+      });
+      setErrors(newErrors);
+      
+      // Show first error as toast
+      const firstError = result.error.errors[0];
+      toast.error(firstError.message);
+      return false;
+    }
+
+    setErrors({});
+    return true;
+  };
+
   const handleSubmit = async () => {
-    if (!phone) {
-      toast.error('Please enter your phone number');
-      return;
-    }
-    if (deliveryType === 'dine_in' && !tableNumber) {
-      toast.error('Please enter your table number');
-      return;
-    }
-    if (deliveryType === 'delivery' && !address) {
-      toast.error('Please enter your delivery address');
+    if (!validateForm()) {
       return;
     }
 
@@ -57,10 +77,15 @@ const CheckoutDialog: React.FC<CheckoutDialogProps> = ({ isOpen, onClose, onComp
 
       let customerId = existingCustomer?.id;
 
+      // Sanitize inputs before database insertion
+      const sanitizedPhone = sanitizePhone(phone);
+      const sanitizedAddress = sanitizeText(address);
+      const sanitizedSpecialRequests = sanitizeText(specialRequests);
+
       if (!customerId) {
         const { data: newCustomer, error: customerError } = await supabase
           .from('customers')
-          .insert({ phone_number: phone })
+          .insert({ phone_number: sanitizedPhone })
           .select('id')
           .single();
 
@@ -91,22 +116,22 @@ const CheckoutDialog: React.FC<CheckoutDialogProps> = ({ isOpen, onClose, onComp
           tax: tax,
           delivery_fee: deliveryFee,
           total: finalTotal,
-          special_instructions: specialRequests || null,
-          delivery_address: deliveryType === 'delivery' ? address : null,
-          phone_number: phone,
+          special_instructions: sanitizedSpecialRequests || null,
+          delivery_address: deliveryType === 'delivery' ? sanitizedAddress : null,
+          phone_number: sanitizedPhone,
         } as any)
         .select()
         .single();
 
       if (orderError) throw orderError;
 
-      // Create order items
+      // Create order items with sanitized instructions
       const orderItems = items.map((item) => ({
         order_id: order.id,
-        item_name: item.name,
+        item_name: sanitizeText(item.name),
         item_price: item.price,
         quantity: item.quantity,
-        special_instructions: item.specialInstructions || null,
+        special_instructions: sanitizeText(item.specialInstructions) || null,
       }));
 
       const { error: itemsError } = await supabase
@@ -200,9 +225,14 @@ const CheckoutDialog: React.FC<CheckoutDialogProps> = ({ isOpen, onClose, onComp
               type="tel"
               placeholder="+91 98765 43210"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className="bg-secondary border-border"
+              onChange={(e) => {
+                setPhone(e.target.value);
+                if (errors.phone) setErrors((prev) => ({ ...prev, phone: '' }));
+              }}
+              maxLength={15}
+              className={cn("bg-secondary border-border", errors.phone && "border-destructive")}
             />
+            {errors.phone && <p className="text-xs text-destructive">{errors.phone}</p>}
           </div>
 
           {/* Table Number (for Dine-in) */}
@@ -213,9 +243,16 @@ const CheckoutDialog: React.FC<CheckoutDialogProps> = ({ isOpen, onClose, onComp
                 type="text"
                 placeholder="Enter your table number"
                 value={tableNumber}
-                onChange={(e) => setTableNumber(e.target.value)}
-                className="bg-secondary border-border"
+                onChange={(e) => {
+                  // Only allow numeric input
+                  const val = e.target.value.replace(/\D/g, '');
+                  setTableNumber(val);
+                  if (errors.tableNumber) setErrors((prev) => ({ ...prev, tableNumber: '' }));
+                }}
+                maxLength={3}
+                className={cn("bg-secondary border-border", errors.tableNumber && "border-destructive")}
               />
+              {errors.tableNumber && <p className="text-xs text-destructive">{errors.tableNumber}</p>}
             </div>
           )}
 
@@ -229,10 +266,16 @@ const CheckoutDialog: React.FC<CheckoutDialogProps> = ({ isOpen, onClose, onComp
               <Textarea
                 placeholder="Enter your full address"
                 value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                className="bg-secondary border-border resize-none"
+                onChange={(e) => {
+                  setAddress(e.target.value.slice(0, 500));
+                  if (errors.address) setErrors((prev) => ({ ...prev, address: '' }));
+                }}
+                maxLength={500}
+                className={cn("bg-secondary border-border resize-none", errors.address && "border-destructive")}
                 rows={3}
               />
+              {errors.address && <p className="text-xs text-destructive">{errors.address}</p>}
+              <p className="text-xs text-muted-foreground">{address.length}/500</p>
             </div>
           )}
 
@@ -245,10 +288,12 @@ const CheckoutDialog: React.FC<CheckoutDialogProps> = ({ isOpen, onClose, onComp
             <Textarea
               placeholder="Any special requests for the kitchen..."
               value={specialRequests}
-              onChange={(e) => setSpecialRequests(e.target.value)}
+              onChange={(e) => setSpecialRequests(e.target.value.slice(0, 500))}
+              maxLength={500}
               className="bg-secondary border-border resize-none"
               rows={2}
             />
+            <p className="text-xs text-muted-foreground">{specialRequests.length}/500</p>
           </div>
 
           {/* Order Summary */}

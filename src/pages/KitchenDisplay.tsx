@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { sanitizeText } from '@/lib/validation';
 
 interface Order {
   id: string;
@@ -226,7 +227,7 @@ const KitchenDisplay: React.FC = () => {
                       <span className="font-medium">{item.quantity}x</span>{' '}
                       <span>{item.item_name}</span>
                       {item.special_instructions && (
-                        <p className="text-xs text-gold mt-1">Note: {item.special_instructions}</p>
+                        <p className="text-xs text-gold mt-1">Note: {sanitizeText(item.special_instructions)}</p>
                       )}
                     </div>
                   </div>
@@ -236,7 +237,7 @@ const KitchenDisplay: React.FC = () => {
               {/* Special Instructions */}
               {order.special_instructions && (
                 <div className="bg-gold/10 rounded-lg p-2 mb-4">
-                  <p className="text-sm text-gold">📝 {order.special_instructions}</p>
+                  <p className="text-sm text-gold">📝 {sanitizeText(order.special_instructions)}</p>
                 </div>
               )}
 
