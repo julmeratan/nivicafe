@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/hooks/useAuth";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import Index from "./pages/Index";
 import MenuPage from "./pages/MenuPage";
 import KitchenDisplay from "./pages/KitchenDisplay";
@@ -34,9 +35,23 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/menu" element={<MenuPage />} />
-              <Route path="/kitchen" element={<KitchenDisplay />} />
+              <Route 
+                path="/kitchen" 
+                element={
+                  <ProtectedRoute requiredRoles={['admin', 'chef', 'staff']}>
+                    <KitchenDisplay />
+                  </ProtectedRoute>
+                } 
+              />
               <Route path="/admin/login" element={<AdminLogin />} />
-              <Route path="/admin" element={<AdminDashboard />} />
+              <Route 
+                path="/admin" 
+                element={
+                  <ProtectedRoute requiredRoles={['admin']}>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                } 
+              />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
