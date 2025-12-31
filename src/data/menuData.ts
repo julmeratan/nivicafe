@@ -16,6 +16,24 @@ import stuffedPortobello from '@/assets/stuffed-portobello.jpg';
 import vegetableTempura from '@/assets/vegetable-tempura.jpg';
 import lambSeekhKebab from '@/assets/lamb-seekh-kebab.jpg';
 import garlicButterPrawns from '@/assets/garlic-butter-prawns.jpg';
+import zucchiniFries from '@/assets/zucchini-fries.jpg';
+import cheeseCroquettes from '@/assets/cheese-croquettes.jpg';
+import cornCheeseBalls from '@/assets/corn-cheese-balls.jpg';
+import avocadoToast from '@/assets/avocado-toast.jpg';
+import capreseSkewers from '@/assets/caprese-skewers.jpg';
+import spinachRicottaParcels from '@/assets/spinach-ricotta-parcels.jpg';
+import alfredoPasta from '@/assets/alfredo-pasta.jpg';
+import mushroomRisotto from '@/assets/mushroom-risotto.jpg';
+import thaiGreenCurry from '@/assets/thai-green-curry.jpg';
+import grilledChickenSteak from '@/assets/grilled-chicken-steak.jpg';
+import grilledLambChops from '@/assets/grilled-lamb-chops.jpg';
+import margheritaPizza from '@/assets/margherita-pizza.jpg';
+import gourmetBurger from '@/assets/gourmet-burger.jpg';
+import loadedNachos from '@/assets/loaded-nachos.jpg';
+import shawarma from '@/assets/shawarma.jpg';
+import mexicanTacos from '@/assets/mexican-tacos.jpg';
+import tiramisu from '@/assets/tiramisu.jpg';
+import chocolateLavaCake from '@/assets/chocolate-lava-cake.jpg';
 
 import type { MenuItem, Category } from '@/types/menu';
 
@@ -166,7 +184,7 @@ export const menuItems: MenuItem[] = [
     name: 'Zucchini Fries',
     description: 'Crispy parmesan-crusted zucchini sticks served with ranch dipping sauce.',
     price: 220,
-    image: paneerTikka,
+    image: zucchiniFries,
     category: 'veg-starters',
     servings: 'Serves 2',
     spiceLevel: 'mild',
@@ -180,7 +198,7 @@ export const menuItems: MenuItem[] = [
     name: 'Cheese Croquettes',
     description: 'Creamy potato and cheese croquettes with a crispy golden exterior.',
     price: 260,
-    image: paneerTikka,
+    image: cheeseCroquettes,
     category: 'veg-starters',
     servings: '6 pieces',
     spiceLevel: 'mild',
@@ -194,7 +212,7 @@ export const menuItems: MenuItem[] = [
     name: 'Spinach & Ricotta Parcels',
     description: 'Flaky phyllo pastry filled with creamy spinach and ricotta cheese.',
     price: 280,
-    image: paneerTikka,
+    image: spinachRicottaParcels,
     category: 'veg-starters',
     servings: '4 pieces',
     spiceLevel: 'mild',
@@ -208,7 +226,7 @@ export const menuItems: MenuItem[] = [
     name: 'Corn Cheese Balls',
     description: 'Golden fried balls stuffed with sweet corn and melted cheese.',
     price: 240,
-    image: paneerTikka,
+    image: cornCheeseBalls,
     category: 'veg-starters',
     servings: '8 pieces',
     spiceLevel: 'mild',
@@ -222,7 +240,7 @@ export const menuItems: MenuItem[] = [
     name: 'Avocado Toast Bites',
     description: 'Sourdough crostini with smashed avocado, cherry tomatoes, and microgreens.',
     price: 300,
-    image: paneerTikka,
+    image: avocadoToast,
     category: 'veg-starters',
     servings: '4 pieces',
     spiceLevel: 'mild',
@@ -236,7 +254,7 @@ export const menuItems: MenuItem[] = [
     name: 'Caprese Skewers',
     description: 'Fresh mozzarella, cherry tomatoes, and basil drizzled with balsamic glaze.',
     price: 290,
-    image: paneerTikka,
+    image: capreseSkewers,
     category: 'veg-starters',
     servings: '6 skewers',
     spiceLevel: 'mild',
@@ -520,7 +538,7 @@ export const menuItems: MenuItem[] = [
     name: 'Alfredo Pasta with Exotic Vegetables',
     description: 'Fettuccine in a rich parmesan cream sauce with grilled vegetables.',
     price: 340,
-    image: dalMakhani,
+    image: alfredoPasta,
     category: 'veg-mains',
     servings: 'Serves 1',
     spiceLevel: 'mild',
@@ -604,7 +622,7 @@ export const menuItems: MenuItem[] = [
     name: 'Thai Green Curry (Veg)',
     description: 'Coconut curry with Thai basil, bamboo shoots, and vegetables.',
     price: 320,
-    image: dalMakhani,
+    image: thaiGreenCurry,
     category: 'veg-mains',
     servings: 'Serves 1',
     spiceLevel: 'medium',
@@ -618,7 +636,7 @@ export const menuItems: MenuItem[] = [
     name: 'Thai Red Curry (Veg)',
     description: 'Spicy coconut curry with red chilies and seasonal vegetables.',
     price: 320,
-    image: dalMakhani,
+    image: thaiGreenCurry,
     category: 'veg-mains',
     servings: 'Serves 1',
     spiceLevel: 'hot',
@@ -688,7 +706,7 @@ export const menuItems: MenuItem[] = [
     name: 'Creamy Mushroom Risotto',
     description: 'Arborio rice slow-cooked with wild mushrooms, parmesan, and truffle oil.',
     price: 380,
-    image: dalMakhani,
+    image: mushroomRisotto,
     category: 'veg-mains',
     servings: 'Serves 1',
     spiceLevel: 'mild',
@@ -718,7 +736,7 @@ export const menuItems: MenuItem[] = [
     name: 'Grilled Chicken Steak',
     description: 'Juicy chicken breast grilled to perfection with herb butter.',
     price: 420,
-    image: butterChicken,
+    image: grilledChickenSteak,
     category: 'nonveg-mains',
     servings: 'Serves 1',
     spiceLevel: 'mild',
@@ -830,7 +848,7 @@ export const menuItems: MenuItem[] = [
     name: 'Grilled Lamb Chops',
     description: 'Premium lamb chops with mint sauce and roasted garlic.',
     price: 650,
-    image: butterChicken,
+    image: grilledLambChops,
     category: 'nonveg-mains',
     servings: '3 pieces',
     spiceLevel: 'medium',
@@ -930,7 +948,7 @@ export const menuItems: MenuItem[] = [
     name: 'Wood-Fired Margherita Pizza',
     description: 'Classic Neapolitan pizza with San Marzano tomatoes and fresh mozzarella.',
     price: 380,
-    image: heroBiryani,
+    image: margheritaPizza,
     category: 'live-counters',
     servings: 'Serves 2',
     spiceLevel: 'mild',
@@ -944,7 +962,7 @@ export const menuItems: MenuItem[] = [
     name: 'Wood-Fired Veg Supreme Pizza',
     description: 'Loaded with bell peppers, olives, mushrooms, and jalapeños.',
     price: 420,
-    image: heroBiryani,
+    image: margheritaPizza,
     category: 'live-counters',
     servings: 'Serves 2',
     spiceLevel: 'medium',
@@ -958,7 +976,7 @@ export const menuItems: MenuItem[] = [
     name: 'Chicken Pepperoni Pizza',
     description: 'Crispy chicken pepperoni with mozzarella and oregano.',
     price: 450,
-    image: heroBiryani,
+    image: margheritaPizza,
     category: 'live-counters',
     servings: 'Serves 2',
     spiceLevel: 'mild',
@@ -972,7 +990,7 @@ export const menuItems: MenuItem[] = [
     name: 'Gourmet Veg Burger',
     description: 'Crispy veggie patty with truffle mayo, arugula, and caramelized onions.',
     price: 320,
-    image: heroBiryani,
+    image: gourmetBurger,
     category: 'live-counters',
     servings: 'Serves 1',
     spiceLevel: 'mild',
@@ -986,7 +1004,7 @@ export const menuItems: MenuItem[] = [
     name: 'Gourmet Chicken Burger',
     description: 'Grilled chicken breast with bacon, cheese, and chipotle mayo.',
     price: 380,
-    image: heroBiryani,
+    image: gourmetBurger,
     category: 'live-counters',
     servings: 'Serves 1',
     spiceLevel: 'medium',
@@ -1042,7 +1060,7 @@ export const menuItems: MenuItem[] = [
     name: 'Mexican Soft Tacos (Non-Veg)',
     description: 'Three soft tacos with spiced chicken, salsa, and sour cream.',
     price: 340,
-    image: heroBiryani,
+    image: mexicanTacos,
     category: 'live-counters',
     servings: '3 pieces',
     spiceLevel: 'medium',
@@ -1070,7 +1088,7 @@ export const menuItems: MenuItem[] = [
     name: 'Middle Eastern Shawarma',
     description: 'Slow-roasted meat wrapped in pita with garlic sauce and pickles.',
     price: 280,
-    image: heroBiryani,
+    image: shawarma,
     category: 'live-counters',
     servings: 'Serves 1',
     spiceLevel: 'medium',
@@ -1084,7 +1102,7 @@ export const menuItems: MenuItem[] = [
     name: 'Loaded Nachos',
     description: 'Crispy tortilla chips with cheese, jalapeños, beans, and salsa.',
     price: 280,
-    image: heroBiryani,
+    image: loadedNachos,
     category: 'live-counters',
     servings: 'Serves 2',
     spiceLevel: 'medium',
@@ -1098,7 +1116,7 @@ export const menuItems: MenuItem[] = [
     name: 'Gourmet Sliders',
     description: 'Mini burgers with assorted fillings – chicken, lamb, and veggie.',
     price: 380,
-    image: heroBiryani,
+    image: gourmetBurger,
     category: 'live-counters',
     servings: '4 pieces',
     spiceLevel: 'mild',
