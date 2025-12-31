@@ -11,12 +11,14 @@ import {
   Clock,
   QrCode,
   ChefHat,
+  UtensilsCrossed,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import QRCodeDisplay from '@/components/qr/QRCodeDisplay';
+import MenuManagement from '@/components/admin/MenuManagement';
 import { cn } from '@/lib/utils';
 
 type TabType = 'overview' | 'orders' | 'menu' | 'customers' | 'tables';
@@ -138,6 +140,7 @@ const AdminDashboard: React.FC = () => {
   const tabs = [
     { id: 'overview' as const, label: 'Overview', icon: LayoutDashboard },
     { id: 'orders' as const, label: 'Orders', icon: ShoppingCart },
+    { id: 'menu' as const, label: 'Menu', icon: UtensilsCrossed },
     { id: 'customers' as const, label: 'Customers', icon: Users },
     { id: 'tables' as const, label: 'QR Codes', icon: QrCode },
   ];
@@ -336,6 +339,8 @@ const AdminDashboard: React.FC = () => {
             </div>
           </div>
         )}
+
+        {activeTab === 'menu' && <MenuManagement />}
 
         {activeTab === 'customers' && (
           <div>
