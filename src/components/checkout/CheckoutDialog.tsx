@@ -68,92 +68,58 @@ const CheckoutDialog: React.FC<CheckoutDialogProps> = ({ isOpen, onClose, onComp
     setIsSubmitting(true);
 
     try {
-      // Create or get customer
-      const { data: existingCustomer } = await supabase
-        .from('customers')
-        .select('id')
-        .eq('phone_number', phone)
-        .maybeSingle();
-
-      let customerId = existingCustomer?.id;
-
-      // Sanitize inputs before database insertion
+      // Use secure edge function for order creation
       const sanitizedPhone = sanitizePhone(phone);
-      const sanitizedAddress = sanitizeText(address);
-      const sanitizedSpecialRequests = sanitizeText(specialRequests);
+      
+      const orderPayload = {
+        phone: sanitizedPhone,
+        deliveryType: deliveryType,
+        tableNumber: deliveryType === 'dine_in' ? tableNumber.trim() : null,
+        address: deliveryType === 'delivery' ? address.trim() : null,
+        specialRequests: specialRequests.trim() || null,
+        items: items.map((item) => ({
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          specialInstructions: item.specialInstructions || null,
+        })),
+        subtotal: totalPrice,
+        tax: tax,
+        deliveryFee: deliveryFee,
+        total: finalTotal,
+      };
 
-      if (!customerId) {
-        const { data: newCustomer, error: customerError } = await supabase
-          .from('customers')
-          .insert({ phone_number: sanitizedPhone })
-          .select('id')
-          .single();
+      const { data, error: orderError } = await supabase.functions.invoke('create-order', {
+        body: orderPayload,
+      });
 
-        if (customerError) throw customerError;
-        customerId = newCustomer.id;
+      if (orderError) {
+        console.error('Order creation error:', orderError);
+        toast.error('Failed to place order. Please try again.');
+        return;
       }
 
-      // Get table ID if dine-in
-      let tableId = null;
-      if (deliveryType === 'dine_in' && tableNumber) {
-        const { data: tableData } = await supabase
-          .from('tables')
-          .select('id')
-          .eq('table_number', parseInt(tableNumber))
-          .maybeSingle();
-        tableId = tableData?.id;
+      if (!data?.success) {
+        toast.error(data?.error || 'Failed to place order. Please try again.');
+        return;
       }
 
-      // Create order - trigger generates order_number but we need to provide a placeholder
-      const { data: order, error: orderError } = await supabase
-        .from('orders')
-        .insert({
-          order_number: `ORD-${Date.now()}`, // Will be overwritten by trigger
-          customer_id: customerId,
-          table_id: tableId,
-          delivery_type: deliveryType,
-          subtotal: totalPrice,
-          tax: tax,
-          delivery_fee: deliveryFee,
-          total: finalTotal,
-          special_instructions: sanitizedSpecialRequests || null,
-          delivery_address: deliveryType === 'delivery' ? sanitizedAddress : null,
-          phone_number: sanitizedPhone,
-        } as any)
-        .select()
-        .single();
-
-      if (orderError) throw orderError;
-
-      // Create order items with sanitized instructions
-      const orderItems = items.map((item) => ({
-        order_id: order.id,
-        item_name: sanitizeText(item.name),
-        item_price: item.price,
-        quantity: item.quantity,
-        special_instructions: sanitizeText(item.specialInstructions) || null,
-      }));
-
-      const { error: itemsError } = await supabase
-        .from('order_items')
-        .insert(orderItems);
-
-      if (itemsError) throw itemsError;
+      const order = data.order;
 
       // Notify chef via WhatsApp edge function
       try {
         const notificationPayload = {
           orderId: order.id,
-          orderNumber: order.order_number,
+          orderNumber: order.orderNumber,
           items: items.map((item) => ({
             name: item.name,
             quantity: item.quantity,
             specialInstructions: item.specialInstructions,
           })),
-          tableNumber: tableNumber ? parseInt(tableNumber) : undefined,
+          tableNumber: tableNumber ? parseInt(tableNumber) : null,
           deliveryType: deliveryType,
           total: finalTotal,
-          phoneNumber: phone,
+          phoneNumber: sanitizedPhone,
         };
 
         const { error: notifyError } = await supabase.functions.invoke('notify-chef-whatsapp', {
@@ -172,7 +138,7 @@ const CheckoutDialog: React.FC<CheckoutDialogProps> = ({ isOpen, onClose, onComp
 
       clearCart();
       toast.success('Order placed successfully! Chef has been notified.');
-      onComplete(order.id, finalTotal);
+      onComplete(order.id, order.total);
     } catch (error) {
       console.error('Order error:', error);
       toast.error('Failed to place order. Please try again.');

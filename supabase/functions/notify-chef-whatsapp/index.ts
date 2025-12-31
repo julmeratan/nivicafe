@@ -1,23 +1,38 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-interface OrderNotification {
-  orderId: string;
-  orderNumber: string;
-  items: Array<{
-    name: string;
-    quantity: number;
-    specialInstructions?: string;
-  }>;
-  tableNumber?: number;
-  deliveryType: string;
-  total: number;
-  phoneNumber: string;
+// Validation schema for order notification
+const OrderItemSchema = z.object({
+  name: z.string().min(1).max(200),
+  quantity: z.number().int().min(1).max(100),
+  specialInstructions: z.string().max(500).optional().nullable(),
+});
+
+const OrderNotificationSchema = z.object({
+  orderId: z.string().uuid(),
+  orderNumber: z.string().min(1).max(50),
+  items: z.array(OrderItemSchema).min(1).max(50),
+  tableNumber: z.number().int().min(1).max(999).optional().nullable(),
+  deliveryType: z.enum(['dine_in', 'takeaway', 'delivery']),
+  total: z.number().positive().max(1000000),
+  phoneNumber: z.string().regex(/^\+?[0-9]{10,15}$/),
+});
+
+type OrderNotification = z.infer<typeof OrderNotificationSchema>;
+
+// Sanitize text for WhatsApp message (remove control characters, limit length)
+function sanitizeForMessage(text: string | null | undefined, maxLength: number = 200): string {
+  if (!text) return '';
+  return text
+    .replace(/[\x00-\x1F\x7F]/g, '') // Remove control characters
+    .replace(/[<>]/g, '') // Remove angle brackets
+    .substring(0, maxLength)
+    .trim();
 }
 
 serve(async (req) => {
@@ -34,18 +49,44 @@ serve(async (req) => {
 
     if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_WHATSAPP_FROM || !CHEF_WHATSAPP_NUMBER) {
       console.error("Missing Twilio configuration");
-      throw new Error("Missing Twilio configuration");
+      return new Response(
+        JSON.stringify({ error: "Service configuration error" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
-    const notification: OrderNotification = await req.json();
-    console.log("Received order notification:", notification);
+    // Parse and validate incoming data
+    let rawData: unknown;
+    try {
+      rawData = await req.json();
+    } catch {
+      console.error("Invalid JSON body");
+      return new Response(
+        JSON.stringify({ error: "Invalid request body" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
-    // Format the message
+    // Validate with Zod schema
+    const parseResult = OrderNotificationSchema.safeParse(rawData);
+    if (!parseResult.success) {
+      console.error("Validation error:", parseResult.error.errors);
+      return new Response(
+        JSON.stringify({ error: "Invalid input data" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const notification: OrderNotification = parseResult.data;
+    console.log("Validated order notification for order:", notification.orderId);
+
+    // Format the message with sanitized content
     const itemsList = notification.items
+      .slice(0, 20) // Limit to 20 items in message
       .map((item) => {
-        let line = `• ${item.quantity}x ${item.name}`;
+        let line = `• ${item.quantity}x ${sanitizeForMessage(item.name, 100)}`;
         if (item.specialInstructions) {
-          line += ` (Note: ${item.specialInstructions})`;
+          line += ` (Note: ${sanitizeForMessage(item.specialInstructions, 100)})`;
         }
         return line;
       })
@@ -57,7 +98,7 @@ serve(async (req) => {
       delivery: "Delivery",
     };
 
-    const message = `🔔 *NEW ORDER #${notification.orderNumber}*
+    const message = `🔔 *NEW ORDER #${sanitizeForMessage(notification.orderNumber, 30)}*
 
 📋 *Items:*
 ${itemsList}
@@ -69,7 +110,7 @@ ${notification.tableNumber ? `🪑 *Table:* ${notification.tableNumber}` : ""}
 
 Please prepare this order!`;
 
-    console.log("Sending WhatsApp message to chef:", CHEF_WHATSAPP_NUMBER);
+    console.log("Sending WhatsApp message to chef");
 
     // Send WhatsApp message via Twilio
     const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`;
@@ -89,17 +130,20 @@ Please prepare this order!`;
     });
 
     const twilioResult = await twilioResponse.json();
-    console.log("Twilio response:", twilioResult);
 
     if (!twilioResponse.ok) {
-      console.error("Twilio error:", twilioResult);
-      throw new Error(`Twilio error: ${twilioResult.message || "Unknown error"}`);
+      console.error("Twilio API error:", twilioResult.code, twilioResult.message);
+      return new Response(
+        JSON.stringify({ error: "Failed to send notification" }),
+        { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
+
+    console.log("WhatsApp message sent successfully, SID:", twilioResult.sid);
 
     return new Response(
       JSON.stringify({ 
         success: true, 
-        messageSid: twilioResult.sid,
         message: "Chef notified via WhatsApp" 
       }),
       {
@@ -107,10 +151,10 @@ Please prepare this order!`;
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       }
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error in notify-chef-whatsapp:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: "Internal server error" }),
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
