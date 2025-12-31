@@ -1,1 +1,7 @@
 project_id = "imufgiduthzbvjhdlsqn"
+
+[functions.create-order]
+verify_jwt = false
+
+[functions.notify-chef-whatsapp]
+verify_jwt = false
