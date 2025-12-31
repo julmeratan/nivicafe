@@ -35,6 +35,30 @@ import mexicanTacos from '@/assets/mexican-tacos.jpg';
 import tiramisu from '@/assets/tiramisu.jpg';
 import chocolateLavaCake from '@/assets/chocolate-lava-cake.jpg';
 
+// Auto-fixed dish-accurate images
+import beetrootGoatCheese from '@/assets/beetroot-goat-cheese.jpg';
+import paneerSteak from '@/assets/paneer-steak.jpg';
+import broccoliAlmond from '@/assets/broccoli-almond.jpg';
+
+import periPeriChicken from '@/assets/peri-peri-chicken.jpg';
+import turkishShishKebab from '@/assets/turkish-shish-kebab.jpg';
+import cajunChicken from '@/assets/cajun-chicken.jpg';
+import fishGoujons from '@/assets/fish-goujons.jpg';
+import smokedChickenSkewers from '@/assets/smoked-chicken-skewers.jpg';
+import teriyakiChickenBites from '@/assets/teriyaki-chicken-bites.jpg';
+import honeyGlazedWings from '@/assets/honey-glazed-wings.jpg';
+import pepperCrustedFish from '@/assets/pepper-crusted-fish.jpg';
+import thaiSpicedPrawns from '@/assets/thai-spiced-prawns.jpg';
+import bbqLambBites from '@/assets/bbq-lamb-bites.jpg';
+
+import arrabbiataPasta from '@/assets/arrabbiata-pasta.jpg';
+import pestoPastaImg from '@/assets/pesto-pasta.jpg';
+import ratatouilleImg from '@/assets/ratatouille.jpg';
+import mushroomStroganoff from '@/assets/mushroom-stroganoff.jpg';
+import vegetablePaella from '@/assets/vegetable-paella.jpg';
+import mexicanBurritoBowl from '@/assets/mexican-burrito-bowl.jpg';
+import mediterraneanCasserole from '@/assets/mediterranean-casserole.jpg';
+
 import type { MenuItem, Category } from '@/types/menu';
 
 export const categories: Category[] = [
@@ -268,7 +292,7 @@ export const menuItems: MenuItem[] = [
     name: 'Beetroot & Goat Cheese Tart',
     description: 'Caramelized beetroot and tangy goat cheese on a crispy tart shell.',
     price: 320,
-    image: paneerTikka,
+    image: beetrootGoatCheese,
     category: 'veg-starters',
     servings: '2 pieces',
     spiceLevel: 'mild',
@@ -282,7 +306,7 @@ export const menuItems: MenuItem[] = [
     name: 'Paneer Steak (International Style)',
     description: 'Grilled cottage cheese steak with herb butter and roasted vegetables.',
     price: 340,
-    image: paneerTikka,
+    image: paneerSteak,
     category: 'veg-starters',
     servings: 'Serves 1',
     spiceLevel: 'mild',
@@ -296,7 +320,7 @@ export const menuItems: MenuItem[] = [
     name: 'Broccoli & Almond Stir Fry',
     description: 'Tender broccoli florets stir-fried with toasted almonds and garlic.',
     price: 260,
-    image: paneerTikka,
+    image: broccoliAlmond,
     category: 'veg-starters',
     servings: 'Serves 2',
     spiceLevel: 'mild',
@@ -340,7 +364,7 @@ export const menuItems: MenuItem[] = [
     name: 'Peri-Peri Chicken Skewers',
     description: 'Fiery Portuguese-style chicken with African bird\'s eye chili marinade.',
     price: 340,
-    image: butterChicken,
+    image: periPeriChicken,
     category: 'nonveg-starters',
     servings: '4 skewers',
     spiceLevel: 'hot',
@@ -368,7 +392,7 @@ export const menuItems: MenuItem[] = [
     name: 'Turkish Chicken Shish Kebab',
     description: 'Chargrilled chicken cubes with Mediterranean spices and garlic yogurt.',
     price: 340,
-    image: butterChicken,
+    image: turkishShishKebab,
     category: 'nonveg-starters',
     servings: '3 skewers',
     spiceLevel: 'medium',
@@ -382,7 +406,7 @@ export const menuItems: MenuItem[] = [
     name: 'Cajun Chicken Bites',
     description: 'Crispy chicken pieces coated in bold Cajun spices with ranch dip.',
     price: 300,
-    image: butterChicken,
+    image: cajunChicken,
     category: 'nonveg-starters',
     servings: '10 pieces',
     spiceLevel: 'hot',
@@ -410,7 +434,7 @@ export const menuItems: MenuItem[] = [
     name: 'Crispy Fish Goujons',
     description: 'Golden battered fish fingers served with tartar sauce and lemon.',
     price: 340,
-    image: butterChicken,
+    image: fishGoujons,
     category: 'nonveg-starters',
     servings: '6 pieces',
     spiceLevel: 'mild',
@@ -424,7 +448,7 @@ export const menuItems: MenuItem[] = [
     name: 'Smoked Chicken Skewers',
     description: 'Hickory-smoked chicken with a honey glaze and BBQ seasoning.',
     price: 320,
-    image: butterChicken,
+    image: smokedChickenSkewers,
     category: 'nonveg-starters',
     servings: '4 skewers',
     spiceLevel: 'mild',
@@ -452,7 +476,7 @@ export const menuItems: MenuItem[] = [
     name: 'Teriyaki Chicken Bites',
     description: 'Tender chicken glazed with sweet teriyaki sauce and sesame seeds.',
     price: 300,
-    image: butterChicken,
+    image: teriyakiChickenBites,
     category: 'nonveg-starters',
     servings: '10 pieces',
     spiceLevel: 'mild',
@@ -466,7 +490,7 @@ export const menuItems: MenuItem[] = [
     name: 'Honey Glazed Chicken Wings',
     description: 'Crispy wings coated in a sweet honey and soy glaze.',
     price: 340,
-    image: butterChicken,
+    image: honeyGlazedWings,
     category: 'nonveg-starters',
     servings: '8 pieces',
     spiceLevel: 'mild',
@@ -480,7 +504,7 @@ export const menuItems: MenuItem[] = [
     name: 'Pepper Crusted Fish',
     description: 'Pan-seared fish fillet with cracked black pepper and herb butter.',
     price: 390,
-    image: butterChicken,
+    image: pepperCrustedFish,
     category: 'nonveg-starters',
     servings: 'Serves 1',
     spiceLevel: 'medium',
@@ -494,7 +518,7 @@ export const menuItems: MenuItem[] = [
     name: 'Thai Spiced Prawns',
     description: 'Wok-tossed prawns with Thai basil, chilies, and lemongrass.',
     price: 420,
-    image: butterChicken,
+    image: thaiSpicedPrawns,
     category: 'nonveg-starters',
     servings: '8 pieces',
     spiceLevel: 'hot',
@@ -508,7 +532,7 @@ export const menuItems: MenuItem[] = [
     name: 'BBQ Lamb Bites',
     description: 'Tender lamb cubes glazed with smoky BBQ sauce.',
     price: 400,
-    image: butterChicken,
+    image: bbqLambBites,
     category: 'nonveg-starters',
     servings: '8 pieces',
     spiceLevel: 'medium',
@@ -552,7 +576,7 @@ export const menuItems: MenuItem[] = [
     name: 'Arrabbiata Pasta',
     description: 'Penne in a spicy tomato sauce with garlic and red chilies.',
     price: 300,
-    image: dalMakhani,
+    image: arrabbiataPasta,
     category: 'veg-mains',
     servings: 'Serves 1',
     spiceLevel: 'hot',
@@ -566,7 +590,7 @@ export const menuItems: MenuItem[] = [
     name: 'Pesto Pasta',
     description: 'Spaghetti tossed in fresh basil pesto with pine nuts and parmesan.',
     price: 320,
-    image: dalMakhani,
+    image: pestoPastaImg,
     category: 'veg-mains',
     servings: 'Serves 1',
     spiceLevel: 'mild',
@@ -580,7 +604,7 @@ export const menuItems: MenuItem[] = [
     name: 'Ratatouille',
     description: 'Classic French vegetable stew with eggplant, zucchini, and tomatoes.',
     price: 350,
-    image: dalMakhani,
+    image: ratatouilleImg,
     category: 'veg-mains',
     servings: 'Serves 1',
     spiceLevel: 'mild',
@@ -594,7 +618,7 @@ export const menuItems: MenuItem[] = [
     name: 'Mushroom Stroganoff',
     description: 'Creamy mushroom sauce with paprika served over egg noodles.',
     price: 340,
-    image: dalMakhani,
+    image: mushroomStroganoff,
     category: 'veg-mains',
     servings: 'Serves 1',
     spiceLevel: 'mild',
@@ -608,7 +632,7 @@ export const menuItems: MenuItem[] = [
     name: 'Vegetable Paella',
     description: 'Spanish saffron rice with artichokes, peppers, and green beans.',
     price: 380,
-    image: dalMakhani,
+    image: vegetablePaella,
     category: 'veg-mains',
     servings: 'Serves 2',
     spiceLevel: 'mild',
@@ -650,7 +674,7 @@ export const menuItems: MenuItem[] = [
     name: 'Mexican Veg Burrito Bowl',
     description: 'Rice bowl with black beans, corn, guacamole, and pico de gallo.',
     price: 340,
-    image: dalMakhani,
+    image: mexicanBurritoBowl,
     category: 'veg-mains',
     servings: 'Serves 1',
     spiceLevel: 'medium',
@@ -664,7 +688,7 @@ export const menuItems: MenuItem[] = [
     name: 'Mediterranean Veg Casserole',
     description: 'Baked vegetables with feta, olives, and herbs in tomato sauce.',
     price: 360,
-    image: dalMakhani,
+    image: mediterraneanCasserole,
     category: 'veg-mains',
     servings: 'Serves 1',
     spiceLevel: 'mild',
