@@ -32,9 +32,9 @@ const ScanPage: React.FC = () => {
               <Utensils className="w-10 h-10 text-primary-foreground" />
             </div>
             <h1 className="font-display text-4xl font-bold text-gradient-gold mb-2">
-              Saffron Palace
+              Nivi Cafe and Restro
             </h1>
-            <p className="text-muted-foreground">Fine Indian Cuisine Since 1985</p>
+            <p className="text-muted-foreground">Fine Dining Experience</p>
           </div>
 
           {/* QR Scan Area */}

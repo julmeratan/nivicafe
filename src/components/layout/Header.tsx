@@ -9,7 +9,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ 
-  restaurantName = "Saffron Palace",
+  restaurantName = "Nivi Cafe and Restro",
   onRatingClick 
 }) => {
   return (
@@ -20,7 +20,7 @@ const Header: React.FC<HeaderProps> = ({
             <h1 className="font-display text-2xl font-bold text-gradient-gold">
               {restaurantName}
             </h1>
-            <p className="text-xs text-muted-foreground">Fine Indian Cuisine</p>
+            <p className="text-xs text-muted-foreground">Fine Dining Experience</p>
           </div>
           
           <div className="flex items-center gap-2">
