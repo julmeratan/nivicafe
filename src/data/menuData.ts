@@ -4,6 +4,18 @@ import paneerTikka from '@/assets/paneer-tikka.jpg';
 import dalMakhani from '@/assets/dal-makhani.jpg';
 import naanBread from '@/assets/naan-bread.jpg';
 import gulabJamun from '@/assets/gulab-jamun.jpg';
+import italianBruschetta from '@/assets/italian-bruschetta.jpg';
+import truffleArancini from '@/assets/truffle-arancini.jpg';
+import chickenSatay from '@/assets/chicken-satay.jpg';
+import prawnTempura from '@/assets/prawn-tempura.jpg';
+import vegetableLasagna from '@/assets/vegetable-lasagna.jpg';
+import koreanWings from '@/assets/korean-wings.jpg';
+import falafel from '@/assets/falafel.jpg';
+import grilledHalloumi from '@/assets/grilled-halloumi.jpg';
+import stuffedPortobello from '@/assets/stuffed-portobello.jpg';
+import vegetableTempura from '@/assets/vegetable-tempura.jpg';
+import lambSeekhKebab from '@/assets/lamb-seekh-kebab.jpg';
+import garlicButterPrawns from '@/assets/garlic-butter-prawns.jpg';
 
 import type { MenuItem, Category } from '@/types/menu';
 
@@ -70,7 +82,7 @@ export const menuItems: MenuItem[] = [
     name: 'Italian Bruschetta',
     description: 'Crispy ciabatta topped with fresh tomatoes, basil, garlic, and extra virgin olive oil.',
     price: 280,
-    image: paneerTikka,
+    image: italianBruschetta,
     category: 'veg-starters',
     servings: '4 pieces',
     spiceLevel: 'mild',
@@ -84,7 +96,7 @@ export const menuItems: MenuItem[] = [
     name: 'Truffle Arancini',
     description: 'Golden fried risotto balls infused with black truffle, served with marinara sauce.',
     price: 350,
-    image: paneerTikka,
+    image: truffleArancini,
     category: 'veg-starters',
     servings: '6 pieces',
     spiceLevel: 'mild',
@@ -98,7 +110,7 @@ export const menuItems: MenuItem[] = [
     name: 'Stuffed Portobello Mushrooms',
     description: 'Jumbo portobello caps filled with spinach, ricotta, and sun-dried tomatoes.',
     price: 320,
-    image: paneerTikka,
+    image: stuffedPortobello,
     category: 'veg-starters',
     servings: '2 pieces',
     spiceLevel: 'mild',
@@ -112,7 +124,7 @@ export const menuItems: MenuItem[] = [
     name: 'Vegetable Tempura',
     description: 'Lightly battered seasonal vegetables fried to crispy perfection with ponzu dipping sauce.',
     price: 260,
-    image: paneerTikka,
+    image: vegetableTempura,
     category: 'veg-starters',
     servings: 'Serves 2',
     spiceLevel: 'mild',
@@ -126,7 +138,7 @@ export const menuItems: MenuItem[] = [
     name: 'Grilled Halloumi Skewers',
     description: 'Mediterranean halloumi cheese grilled with cherry tomatoes, olives, and oregano.',
     price: 340,
-    image: paneerTikka,
+    image: grilledHalloumi,
     category: 'veg-starters',
     servings: '3 skewers',
     spiceLevel: 'mild',
@@ -140,7 +152,7 @@ export const menuItems: MenuItem[] = [
     name: 'Falafel with Tahini',
     description: 'Crispy chickpea fritters served with creamy tahini sauce and pickled vegetables.',
     price: 240,
-    image: paneerTikka,
+    image: falafel,
     category: 'veg-starters',
     servings: '6 pieces',
     spiceLevel: 'mild',
@@ -282,7 +294,7 @@ export const menuItems: MenuItem[] = [
     name: 'Chicken Satay',
     description: 'Grilled chicken skewers marinated in lemongrass and turmeric, served with peanut sauce.',
     price: 320,
-    image: butterChicken,
+    image: chickenSatay,
     category: 'nonveg-starters',
     servings: '4 skewers',
     spiceLevel: 'medium',
@@ -296,7 +308,7 @@ export const menuItems: MenuItem[] = [
     name: 'Prawn Tempura',
     description: 'Tiger prawns in a light, crispy batter served with sweet chili sauce.',
     price: 420,
-    image: butterChicken,
+    image: prawnTempura,
     category: 'nonveg-starters',
     servings: '6 pieces',
     spiceLevel: 'mild',
@@ -324,7 +336,7 @@ export const menuItems: MenuItem[] = [
     name: 'Korean Sticky Chicken Wings',
     description: 'Double-fried wings glazed with gochujang and sesame.',
     price: 360,
-    image: butterChicken,
+    image: koreanWings,
     category: 'nonveg-starters',
     servings: '8 pieces',
     spiceLevel: 'medium',
@@ -366,7 +378,7 @@ export const menuItems: MenuItem[] = [
     name: 'Garlic Butter Prawns',
     description: 'Succulent prawns sautéed in butter, garlic, and white wine.',
     price: 450,
-    image: butterChicken,
+    image: garlicButterPrawns,
     category: 'nonveg-starters',
     servings: '8 pieces',
     spiceLevel: 'mild',
@@ -408,7 +420,7 @@ export const menuItems: MenuItem[] = [
     name: 'Lamb Seekh Kebab',
     description: 'Minced lamb with aromatic spices grilled on skewers.',
     price: 380,
-    image: butterChicken,
+    image: lambSeekhKebab,
     category: 'nonveg-starters',
     servings: '4 pieces',
     spiceLevel: 'medium',
@@ -494,7 +506,7 @@ export const menuItems: MenuItem[] = [
     name: 'Vegetable Lasagna',
     description: 'Layers of pasta, roasted vegetables, béchamel, and marinara sauce.',
     price: 380,
-    image: dalMakhani,
+    image: vegetableLasagna,
     category: 'veg-mains',
     servings: 'Serves 1',
     spiceLevel: 'mild',
