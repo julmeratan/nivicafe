@@ -1,16 +1,21 @@
 import React from 'react';
-import { Volume2, VolumeX, Vibrate, SmartphoneNfc, Sun, Moon, Monitor } from 'lucide-react';
+import { Volume2, VolumeX, Vibrate, SmartphoneNfc, Sun, Moon, Monitor, Globe } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { useSettings } from '@/context/SettingsContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { useTheme } from 'next-themes';
 import { haptics } from '@/lib/sounds';
 import { Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Language, languageNames, languageFlags } from '@/lib/translations';
+
+const languages: Language[] = ['en', 'hi', 'es', 'fr'];
 
 const SettingsSheet: React.FC = () => {
   const { soundEnabled, hapticEnabled, toggleSound, toggleHaptic } = useSettings();
+  const { language, setLanguage, t } = useLanguage();
   const { theme, setTheme } = useTheme();
 
   const handleSoundToggle = () => {
@@ -32,6 +37,11 @@ const SettingsSheet: React.FC = () => {
     haptics.light();
   };
 
+  const handleLanguageChange = (lang: Language) => {
+    setLanguage(lang);
+    haptics.light();
+  };
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -39,21 +49,47 @@ const SettingsSheet: React.FC = () => {
           variant="ghost"
           size="icon"
           className="text-muted-foreground hover:text-foreground"
-          aria-label="Settings"
+          aria-label={t.settings}
         >
           <Settings className="w-5 h-5" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="bg-background border-border w-80">
+      <SheetContent side="right" className="bg-background border-border w-80 overflow-y-auto">
         <SheetHeader>
-          <SheetTitle className="font-display text-xl">Settings</SheetTitle>
+          <SheetTitle className="font-display text-xl">{t.settings}</SheetTitle>
         </SheetHeader>
 
         <div className="mt-6 space-y-6">
+          {/* Language Settings */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+              <Globe className="w-4 h-4" />
+              {t.language}
+            </h3>
+
+            <div className="grid grid-cols-2 gap-2">
+              {languages.map((lang) => (
+                <button
+                  key={lang}
+                  onClick={() => handleLanguageChange(lang)}
+                  className={cn(
+                    "flex items-center gap-2 p-3 rounded-xl border-2 transition-all",
+                    language === lang
+                      ? "border-gold bg-gold/10 text-gold"
+                      : "border-border bg-secondary text-muted-foreground hover:border-gold/50"
+                  )}
+                >
+                  <span className="text-lg">{languageFlags[lang]}</span>
+                  <span className="text-sm font-medium">{languageNames[lang]}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Theme Settings */}
           <div className="space-y-4">
             <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-              Appearance
+              {t.appearance}
             </h3>
 
             <div className="grid grid-cols-3 gap-2">
@@ -67,7 +103,7 @@ const SettingsSheet: React.FC = () => {
                 )}
               >
                 <Sun className="w-5 h-5" />
-                <span className="text-xs font-medium">Light</span>
+                <span className="text-xs font-medium">{t.light}</span>
               </button>
               <button
                 onClick={() => handleThemeChange('dark')}
@@ -79,7 +115,7 @@ const SettingsSheet: React.FC = () => {
                 )}
               >
                 <Moon className="w-5 h-5" />
-                <span className="text-xs font-medium">Dark</span>
+                <span className="text-xs font-medium">{t.dark}</span>
               </button>
               <button
                 onClick={() => handleThemeChange('system')}
@@ -91,7 +127,7 @@ const SettingsSheet: React.FC = () => {
                 )}
               >
                 <Monitor className="w-5 h-5" />
-                <span className="text-xs font-medium">Auto</span>
+                <span className="text-xs font-medium">{t.auto}</span>
               </button>
             </div>
           </div>
@@ -99,7 +135,7 @@ const SettingsSheet: React.FC = () => {
           {/* Sound Settings */}
           <div className="space-y-4">
             <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-              Feedback
+              {t.feedback}
             </h3>
 
             {/* Sound Toggle */}
@@ -111,9 +147,9 @@ const SettingsSheet: React.FC = () => {
                   <VolumeX className="w-5 h-5 text-muted-foreground" />
                 )}
                 <div>
-                  <p className="font-medium">Sound Effects</p>
+                  <p className="font-medium">{t.soundEffects}</p>
                   <p className="text-sm text-muted-foreground">
-                    Play sounds for actions
+                    {t.playSoundsForActions}
                   </p>
                 </div>
               </div>
@@ -133,9 +169,9 @@ const SettingsSheet: React.FC = () => {
                   <SmartphoneNfc className="w-5 h-5 text-muted-foreground" />
                 )}
                 <div>
-                  <p className="font-medium">Haptic Feedback</p>
+                  <p className="font-medium">{t.hapticFeedback}</p>
                   <p className="text-sm text-muted-foreground">
-                    Vibration on mobile
+                    {t.vibrationOnMobile}
                   </p>
                 </div>
               </div>
@@ -150,7 +186,7 @@ const SettingsSheet: React.FC = () => {
           {/* Info */}
           <div className="p-4 bg-gold/10 rounded-xl">
             <p className="text-xs text-gold">
-              💡 Haptic feedback works on supported mobile devices only.
+              {t.hapticInfo}
             </p>
           </div>
         </div>
