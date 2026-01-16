@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import type { CartItem, MenuItem } from '@/types/menu';
+import { playAddToCartSound, playRemoveSound } from '@/lib/sounds';
 
 interface CartContextType {
   items: CartItem[];
@@ -18,6 +19,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [items, setItems] = useState<CartItem[]>([]);
 
   const addItem = useCallback((item: MenuItem, quantity = 1, instructions?: string) => {
+    // Play subtle click sound
+    playAddToCartSound();
+    
     setItems(prev => {
       const existingIndex = prev.findIndex(i => i.id === item.id);
       if (existingIndex >= 0) {
@@ -34,6 +38,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const removeItem = useCallback((itemId: string) => {
+    playRemoveSound();
     setItems(prev => prev.filter(item => item.id !== itemId));
   }, []);
 
