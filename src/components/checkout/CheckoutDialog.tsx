@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { checkoutFormSchema, sanitizePhone, sanitizeText } from '@/lib/validation';
+import OrderConfirmationDialog from './OrderConfirmationDialog';
 
 interface CheckoutDialogProps {
   isOpen: boolean;
@@ -28,6 +29,8 @@ const CheckoutDialog: React.FC<CheckoutDialogProps> = ({ isOpen, onClose, onComp
   const [specialRequests, setSpecialRequests] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [confirmedOrder, setConfirmedOrder] = useState<{ orderNumber: string; total: number } | null>(null);
 
   const tax = Math.round(totalPrice * 0.05);
   const deliveryFee = deliveryType === 'delivery' ? 50 : 0;
@@ -137,7 +140,8 @@ const CheckoutDialog: React.FC<CheckoutDialogProps> = ({ isOpen, onClose, onComp
       }
 
       clearCart();
-      toast.success('Order placed successfully! Chef has been notified.');
+      setConfirmedOrder({ orderNumber: order.orderNumber, total: order.total });
+      setShowConfirmation(true);
       onComplete(order.id, order.total);
     } catch (error) {
       console.error('Order error:', error);
@@ -147,7 +151,14 @@ const CheckoutDialog: React.FC<CheckoutDialogProps> = ({ isOpen, onClose, onComp
     }
   };
 
+  const handleConfirmationClose = () => {
+    setShowConfirmation(false);
+    setConfirmedOrder(null);
+    onClose();
+  };
+
   return (
+    <>
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-lg bg-background border-border max-h-[90vh] overflow-y-auto">
         <DialogHeader>
@@ -315,6 +326,18 @@ const CheckoutDialog: React.FC<CheckoutDialogProps> = ({ isOpen, onClose, onComp
         </div>
       </DialogContent>
     </Dialog>
+
+    {confirmedOrder && (
+      <OrderConfirmationDialog
+        isOpen={showConfirmation}
+        onClose={handleConfirmationClose}
+        orderNumber={confirmedOrder.orderNumber}
+        total={confirmedOrder.total}
+        deliveryType={deliveryType}
+        tableNumber={deliveryType === 'dine_in' ? tableNumber : undefined}
+      />
+    )}
+    </>
   );
 };
 
