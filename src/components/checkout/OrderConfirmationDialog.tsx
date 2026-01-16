@@ -56,24 +56,32 @@ const OrderConfirmationDialog: React.FC<OrderConfirmationDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md bg-background border-border text-center p-8">
+      <DialogContent className="max-w-md bg-background border-border text-center p-8 overflow-hidden">
         <div className="flex flex-col items-center gap-6">
-          {/* Success Icon */}
+          {/* Success Icon with ripple effect */}
           <div className="relative">
-            <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center animate-scale-in">
+            {/* Ripple circles */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-20 h-20 rounded-full bg-green-500/20 animate-ripple" />
+            </div>
+            <div className="absolute inset-0 flex items-center justify-center" style={{ animationDelay: '0.2s' }}>
+              <div className="w-20 h-20 rounded-full bg-green-500/10 animate-ripple stagger-2" />
+            </div>
+            
+            {/* Main icon */}
+            <div className="relative w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center animate-bounce-in animate-glow">
               <CheckCircle className="w-12 h-12 text-green-500" />
             </div>
-            <div className="absolute -inset-2 rounded-full border-2 border-green-500/30 animate-ping opacity-75" />
           </div>
 
           {/* Success Message */}
-          <div className="space-y-2">
+          <div className="space-y-2 animate-slide-in-up stagger-1">
             <h2 className="font-display text-2xl text-foreground">Order Confirmed!</h2>
             <p className="text-muted-foreground">Thank you for your order</p>
           </div>
 
           {/* Order Number */}
-          <div className="w-full bg-secondary rounded-xl p-4 space-y-2">
+          <div className="w-full bg-secondary rounded-xl p-4 space-y-2 animate-fade-in-scale stagger-2">
             <p className="text-sm text-muted-foreground">Order Number</p>
             <div className="flex items-center justify-center gap-3">
               <span className="font-mono text-xl font-bold text-gold tracking-wider">
@@ -81,7 +89,7 @@ const OrderConfirmationDialog: React.FC<OrderConfirmationDialogProps> = ({
               </span>
               <button
                 onClick={copyOrderNumber}
-                className="p-2 rounded-lg bg-gold/10 hover:bg-gold/20 transition-colors"
+                className="p-2 rounded-lg bg-gold/10 hover:bg-gold/20 transition-all hover:scale-110 active:scale-95"
                 title="Copy order number"
               >
                 <Copy className="w-4 h-4 text-gold" />
@@ -90,10 +98,10 @@ const OrderConfirmationDialog: React.FC<OrderConfirmationDialogProps> = ({
           </div>
 
           {/* Order Details */}
-          <div className="w-full space-y-3">
+          <div className="w-full space-y-3 animate-slide-in-up stagger-3">
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Total Paid</span>
-              <span className="font-semibold text-gold">₹{total}</span>
+              <span className="font-semibold text-gold text-lg">₹{total}</span>
             </div>
             
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -103,22 +111,22 @@ const OrderConfirmationDialog: React.FC<OrderConfirmationDialogProps> = ({
           </div>
 
           {/* Delivery Info */}
-          <div className="w-full bg-gold/10 rounded-xl p-4">
+          <div className="w-full bg-gold/10 rounded-xl p-4 animate-fade-in-scale stagger-4">
             <p className="text-sm text-gold">{getDeliveryMessage()}</p>
           </div>
 
           {/* Contact Info */}
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground animate-slide-in-up stagger-5">
             <Phone className="w-3 h-3" />
             <span>We'll notify you via WhatsApp when ready</span>
           </div>
 
           {/* Action Buttons */}
-          <div className="w-full space-y-3">
+          <div className="w-full space-y-3 animate-fade-in-scale stagger-6">
             <Button
               variant="gold"
               size="lg"
-              className="w-full"
+              className="w-full transition-transform hover:scale-[1.02] active:scale-[0.98]"
               onClick={onClose}
             >
               Continue Browsing
