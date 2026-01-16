@@ -1,5 +1,5 @@
-// Success sound generator using Web Audio API
-// Creates a pleasant chime/ding sound for order confirmations
+// Sound effects using Web Audio API
+// Creates pleasant UI sounds for interactions
 
 let audioContext: AudioContext | null = null;
 
@@ -8,6 +8,63 @@ const getAudioContext = (): AudioContext => {
     audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
   }
   return audioContext;
+};
+
+// Subtle pop/click sound for adding items
+export const playAddToCartSound = () => {
+  try {
+    const ctx = getAudioContext();
+    const now = ctx.currentTime;
+
+    // Create a soft "pop" sound
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(800, now);
+    oscillator.frequency.exponentialRampToValueAtTime(400, now + 0.08);
+
+    gainNode.gain.setValueAtTime(0, now);
+    gainNode.gain.linearRampToValueAtTime(0.12, now + 0.01);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+
+    oscillator.start(now);
+    oscillator.stop(now + 0.1);
+
+  } catch (error) {
+    // Silently fail if audio isn't supported
+  }
+};
+
+// Soft removal sound
+export const playRemoveSound = () => {
+  try {
+    const ctx = getAudioContext();
+    const now = ctx.currentTime;
+
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(400, now);
+    oscillator.frequency.exponentialRampToValueAtTime(200, now + 0.1);
+
+    gainNode.gain.setValueAtTime(0, now);
+    gainNode.gain.linearRampToValueAtTime(0.08, now + 0.01);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+    oscillator.start(now);
+    oscillator.stop(now + 0.12);
+
+  } catch (error) {
+    // Silently fail
+  }
 };
 
 export const playSuccessSound = () => {
