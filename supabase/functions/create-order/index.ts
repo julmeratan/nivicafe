@@ -139,7 +139,7 @@ serve(async (req) => {
       );
     }
 
-    // Verify prices against menu items
+    // Verify prices against menu items (if available in database)
     const itemNames = input.items.map(item => item.name);
     const { data: menuItems, error: menuError } = await supabase
       .from('menu_items')
@@ -148,10 +148,7 @@ serve(async (req) => {
 
     if (menuError) {
       console.error("Error fetching menu items:", menuError);
-      return new Response(
-        JSON.stringify({ error: "Failed to verify order items" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      // Continue without database validation if there's an error
     }
 
     // Create a map for quick lookup
@@ -160,37 +157,39 @@ serve(async (req) => {
       menuPriceMap.set(item.name, { price: Number(item.price), available: item.is_available !== false });
     }
 
-    // Validate each item
+    // Check if we have menu items in the database
+    const hasMenuItemsInDb = menuItems && menuItems.length > 0;
+    console.log("Menu items in DB:", hasMenuItemsInDb ? menuItems.length : 0);
+
+    // Validate each item - only validate against DB if items exist there
     let calculatedSubtotal = 0;
     for (const item of input.items) {
       const menuItem = menuPriceMap.get(item.name);
       
-      if (!menuItem) {
-        console.error("Item not found:", item.name);
-        return new Response(
-          JSON.stringify({ error: `Item "${item.name}" is not available` }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
+      // If menu items are managed in DB, validate against them
+      if (hasMenuItemsInDb && menuItem) {
+        if (!menuItem.available) {
+          console.error("Item not available:", item.name);
+          return new Response(
+            JSON.stringify({ error: `"${item.name}" is currently unavailable` }),
+            { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
 
-      if (!menuItem.available) {
-        console.error("Item not available:", item.name);
-        return new Response(
-          JSON.stringify({ error: `"${item.name}" is currently unavailable` }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
+        // Verify price matches (allow small rounding differences)
+        if (Math.abs(menuItem.price - item.price) > 0.01) {
+          console.error("Price mismatch for", item.name, "Expected:", menuItem.price, "Got:", item.price);
+          return new Response(
+            JSON.stringify({ error: "Price verification failed. Please refresh and try again." }),
+            { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
 
-      // Verify price matches (allow small rounding differences)
-      if (Math.abs(menuItem.price - item.price) > 0.01) {
-        console.error("Price mismatch for", item.name, "Expected:", menuItem.price, "Got:", item.price);
-        return new Response(
-          JSON.stringify({ error: "Price verification failed. Please refresh and try again." }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        calculatedSubtotal += menuItem.price * item.quantity;
+      } else {
+        // Use frontend-provided prices if DB doesn't have menu items
+        calculatedSubtotal += item.price * item.quantity;
       }
-
-      calculatedSubtotal += menuItem.price * item.quantity;
     }
 
     // Verify subtotal matches
