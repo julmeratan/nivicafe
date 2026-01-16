@@ -3,6 +3,16 @@
 
 let audioContext: AudioContext | null = null;
 
+// Settings state (will be synced from SettingsContext)
+let soundEnabled = true;
+let hapticEnabled = true;
+
+// Sync settings from context
+export const updateSoundSettings = (sound: boolean, haptic: boolean) => {
+  soundEnabled = sound;
+  hapticEnabled = haptic;
+};
+
 const getAudioContext = (): AudioContext => {
   if (!audioContext) {
     audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -12,7 +22,7 @@ const getAudioContext = (): AudioContext => {
 
 // Check if vibration is supported
 const canVibrate = (): boolean => {
-  return 'vibrate' in navigator;
+  return 'vibrate' in navigator && hapticEnabled;
 };
 
 // Haptic feedback patterns
@@ -62,6 +72,8 @@ export const haptics = {
 
 // Subtle pop/click sound for adding items
 export const playAddToCartSound = () => {
+  if (!soundEnabled) return;
+  
   try {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
@@ -91,6 +103,8 @@ export const playAddToCartSound = () => {
 
 // Soft removal sound
 export const playRemoveSound = () => {
+  if (!soundEnabled) return;
+  
   try {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
@@ -118,6 +132,8 @@ export const playRemoveSound = () => {
 };
 
 export const playSuccessSound = () => {
+  if (!soundEnabled) return;
+  
   try {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
@@ -151,11 +167,12 @@ export const playSuccessSound = () => {
 
   } catch (error) {
     // Silently fail if audio isn't supported
-    console.log('Audio playback not supported');
   }
 };
 
 export const playCashRegisterSound = () => {
+  if (!soundEnabled) return;
+  
   try {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
@@ -215,6 +232,6 @@ export const playCashRegisterSound = () => {
     playBell(2800, now + 0.1, 0.4, 0.12);
 
   } catch (error) {
-    console.log('Audio playback not supported');
+    // Silently fail
   }
 };

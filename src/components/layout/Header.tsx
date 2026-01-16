@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Star, Settings } from 'lucide-react';
+import { Search, Star, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import SettingsSheet from '@/components/settings/SettingsSheet';
 
 interface HeaderProps {
   restaurantName?: string;
@@ -36,13 +37,15 @@ const Header: React.FC<HeaderProps> = ({
               <Star className="w-4 h-4" />
               <span className="hidden sm:inline">Rate Us</span>
             </Button>
+            <SettingsSheet />
             <Button 
               variant="ghost" 
               size="icon"
               asChild
+              className="text-muted-foreground hover:text-foreground"
             >
-              <Link to="/admin/login">
-                <Settings className="w-5 h-5" />
+              <Link to="/admin/login" aria-label="Admin login">
+                <ShieldCheck className="w-5 h-5" />
               </Link>
             </Button>
           </div>
