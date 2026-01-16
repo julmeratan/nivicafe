@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { CheckCircle, Copy, Clock, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { toast } from 'sonner';
+import confetti from 'canvas-confetti';
 
 interface OrderConfirmationDialogProps {
   isOpen: boolean;
@@ -25,6 +26,48 @@ const OrderConfirmationDialog: React.FC<OrderConfirmationDialogProps> = ({
     navigator.clipboard.writeText(orderNumber);
     toast.success('Order number copied!');
   };
+
+  // Trigger confetti when dialog opens
+  useEffect(() => {
+    if (isOpen) {
+      // Fire confetti from both sides
+      const fireConfetti = () => {
+        // Left side burst
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          origin: { x: 0.1, y: 0.6 },
+          colors: ['#D4AF37', '#FFD700', '#FFA500', '#22C55E', '#FBBF24'],
+          ticks: 200,
+        });
+        
+        // Right side burst
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          origin: { x: 0.9, y: 0.6 },
+          colors: ['#D4AF37', '#FFD700', '#FFA500', '#22C55E', '#FBBF24'],
+          ticks: 200,
+        });
+      };
+
+      // Initial burst
+      fireConfetti();
+
+      // Second burst after a short delay
+      const timeout = setTimeout(() => {
+        confetti({
+          particleCount: 50,
+          spread: 100,
+          origin: { x: 0.5, y: 0.4 },
+          colors: ['#D4AF37', '#FFD700', '#FFA500', '#22C55E', '#FBBF24'],
+          ticks: 150,
+        });
+      }, 300);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [isOpen]);
 
   const getDeliveryMessage = () => {
     switch (deliveryType) {
