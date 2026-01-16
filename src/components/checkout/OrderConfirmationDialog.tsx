@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
+import { playSuccessSound } from '@/lib/sounds';
 
 interface OrderConfirmationDialogProps {
   isOpen: boolean;
@@ -27,9 +28,12 @@ const OrderConfirmationDialog: React.FC<OrderConfirmationDialogProps> = ({
     toast.success('Order number copied!');
   };
 
-  // Trigger confetti when dialog opens
+  // Trigger confetti and sound when dialog opens
   useEffect(() => {
     if (isOpen) {
+      // Play success sound
+      playSuccessSound();
+
       // Fire confetti from both sides
       const fireConfetti = () => {
         // Left side burst
