@@ -1,5 +1,5 @@
-// Sound effects using Web Audio API
-// Creates pleasant UI sounds for interactions
+// Sound effects and haptic feedback
+// Creates pleasant UI sounds and vibrations for interactions
 
 let audioContext: AudioContext | null = null;
 
@@ -8,6 +8,56 @@ const getAudioContext = (): AudioContext => {
     audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
   }
   return audioContext;
+};
+
+// Check if vibration is supported
+const canVibrate = (): boolean => {
+  return 'vibrate' in navigator;
+};
+
+// Haptic feedback patterns
+export const haptics = {
+  // Light tap - for adding items
+  light: () => {
+    if (canVibrate()) {
+      navigator.vibrate(10);
+    }
+  },
+  
+  // Medium tap - for confirmations
+  medium: () => {
+    if (canVibrate()) {
+      navigator.vibrate(25);
+    }
+  },
+  
+  // Success pattern - for order confirmation
+  success: () => {
+    if (canVibrate()) {
+      navigator.vibrate([30, 50, 30, 50, 50]);
+    }
+  },
+  
+  // Error/warning pattern
+  error: () => {
+    if (canVibrate()) {
+      navigator.vibrate([50, 30, 50]);
+    }
+  },
+  
+  // Double tap - for removal
+  double: () => {
+    if (canVibrate()) {
+      navigator.vibrate([15, 30, 15]);
+    }
+  },
+  
+  // Soft pulse - for quantity changes
+  pulse: () => {
+    if (canVibrate()) {
+      navigator.vibrate(8);
+    }
+  },
 };
 
 // Subtle pop/click sound for adding items

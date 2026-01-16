@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
-import { playSuccessSound } from '@/lib/sounds';
+import { playSuccessSound, haptics } from '@/lib/sounds';
 
 interface OrderConfirmationDialogProps {
   isOpen: boolean;
@@ -25,14 +25,16 @@ const OrderConfirmationDialog: React.FC<OrderConfirmationDialogProps> = ({
 }) => {
   const copyOrderNumber = () => {
     navigator.clipboard.writeText(orderNumber);
+    haptics.light();
     toast.success('Order number copied!');
   };
 
-  // Trigger confetti and sound when dialog opens
+  // Trigger confetti, sound, and haptic when dialog opens
   useEffect(() => {
     if (isOpen) {
-      // Play success sound
+      // Play success sound and haptic
       playSuccessSound();
+      haptics.success();
 
       // Fire confetti from both sides
       const fireConfetti = () => {
