@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
-import { CheckCircle, Copy, Clock, Phone } from 'lucide-react';
+import { CheckCircle, Copy, Clock, Phone, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
 import { playSuccessSound, haptics } from '@/lib/sounds';
+import { useNavigate } from 'react-router-dom';
 
 interface OrderConfirmationDialogProps {
   isOpen: boolean;
@@ -23,10 +24,17 @@ const OrderConfirmationDialog: React.FC<OrderConfirmationDialogProps> = ({
   deliveryType,
   tableNumber,
 }) => {
+  const navigate = useNavigate();
+
   const copyOrderNumber = () => {
     navigator.clipboard.writeText(orderNumber);
     haptics.light();
     toast.success('Order number copied!');
+  };
+
+  const handleTrackOrder = () => {
+    onClose();
+    navigate(`/track-order?order=${orderNumber}`);
   };
 
   // Trigger confetti, sound, and haptic when dialog opens
@@ -174,6 +182,15 @@ const OrderConfirmationDialog: React.FC<OrderConfirmationDialogProps> = ({
           <div className="w-full space-y-3 animate-fade-in-scale stagger-6">
             <Button
               variant="gold"
+              size="lg"
+              className="w-full transition-transform hover:scale-[1.02] active:scale-[0.98]"
+              onClick={handleTrackOrder}
+            >
+              <MapPin className="w-4 h-4 mr-2" />
+              Track Your Order
+            </Button>
+            <Button
+              variant="outline"
               size="lg"
               className="w-full transition-transform hover:scale-[1.02] active:scale-[0.98]"
               onClick={onClose}

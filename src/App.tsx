@@ -12,6 +12,7 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import SettingsSyncer from "@/components/settings/SettingsSyncer";
 import Index from "./pages/Index";
 import MenuPage from "./pages/MenuPage";
+import OrderTrackingPage from "./pages/OrderTrackingPage";
 import KitchenDisplay from "./pages/KitchenDisplay";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -43,6 +44,7 @@ const App = () => (
                   <Routes>
                     <Route path="/" element={<Index />} />
                     <Route path="/menu" element={<MenuPage />} />
+                    <Route path="/track-order" element={<OrderTrackingPage />} />
                     <Route 
                       path="/kitchen" 
                       element={

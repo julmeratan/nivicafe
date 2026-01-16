@@ -68,6 +68,18 @@ export interface Translations {
   notifyViaWhatsApp: string;
   continueBrowsing: string;
   copied: string;
+  trackOrder: string;
+  trackYourOrder: string;
+  findYourOrder: string;
+  orderNotFound: string;
+  orderNotFoundMessage: string;
+  orderProgress: string;
+  orderItems: string;
+  orderPlaced: string;
+  confirmed: string;
+  preparing: string;
+  ready: string;
+  inProgress: string;
   
   // Spice Levels
   mild: string;
@@ -159,6 +171,18 @@ export const translations: Record<Language, Translations> = {
     notifyViaWhatsApp: "We'll notify you via WhatsApp when ready",
     continueBrowsing: 'Continue Browsing',
     copied: 'Order number copied!',
+    trackOrder: 'Track Order',
+    trackYourOrder: 'Track Your Order',
+    findYourOrder: 'Find Your Order',
+    orderNotFound: 'Order Not Found',
+    orderNotFoundMessage: 'Please check your order number or phone number and try again.',
+    orderProgress: 'Order Progress',
+    orderItems: 'Order Items',
+    orderPlaced: 'Order Placed',
+    confirmed: 'Confirmed',
+    preparing: 'Preparing',
+    ready: 'Ready',
+    inProgress: 'In progress...',
     
     // Spice Levels
     mild: 'Mild',
@@ -249,6 +273,18 @@ export const translations: Record<Language, Translations> = {
     notifyViaWhatsApp: 'तैयार होने पर WhatsApp से सूचित करेंगे',
     continueBrowsing: 'ब्राउज़िंग जारी रखें',
     copied: 'ऑर्डर नंबर कॉपी हो गया!',
+    trackOrder: 'ऑर्डर ट्रैक करें',
+    trackYourOrder: 'अपना ऑर्डर ट्रैक करें',
+    findYourOrder: 'अपना ऑर्डर खोजें',
+    orderNotFound: 'ऑर्डर नहीं मिला',
+    orderNotFoundMessage: 'कृपया अपना ऑर्डर नंबर या फोन नंबर जांचें और पुनः प्रयास करें।',
+    orderProgress: 'ऑर्डर प्रगति',
+    orderItems: 'ऑर्डर आइटम',
+    orderPlaced: 'ऑर्डर दिया गया',
+    confirmed: 'पुष्टि हुई',
+    preparing: 'तैयार हो रहा है',
+    ready: 'तैयार',
+    inProgress: 'प्रगति में...',
     
     // Spice Levels
     mild: 'कम मसाला',
@@ -339,6 +375,18 @@ export const translations: Record<Language, Translations> = {
     notifyViaWhatsApp: 'Te notificaremos por WhatsApp',
     continueBrowsing: 'Seguir Explorando',
     copied: '¡Número de pedido copiado!',
+    trackOrder: 'Rastrear Pedido',
+    trackYourOrder: 'Rastrea Tu Pedido',
+    findYourOrder: 'Encuentra Tu Pedido',
+    orderNotFound: 'Pedido No Encontrado',
+    orderNotFoundMessage: 'Por favor, verifica tu número de pedido o teléfono e intenta de nuevo.',
+    orderProgress: 'Progreso del Pedido',
+    orderItems: 'Artículos del Pedido',
+    orderPlaced: 'Pedido Realizado',
+    confirmed: 'Confirmado',
+    preparing: 'Preparando',
+    ready: 'Listo',
+    inProgress: 'En progreso...',
     
     // Spice Levels
     mild: 'Suave',
@@ -429,6 +477,18 @@ export const translations: Record<Language, Translations> = {
     notifyViaWhatsApp: 'Nous vous notifierons via WhatsApp',
     continueBrowsing: 'Continuer',
     copied: 'Numéro de commande copié!',
+    trackOrder: 'Suivre Commande',
+    trackYourOrder: 'Suivez Votre Commande',
+    findYourOrder: 'Trouvez Votre Commande',
+    orderNotFound: 'Commande Non Trouvée',
+    orderNotFoundMessage: 'Veuillez vérifier votre numéro de commande ou téléphone et réessayer.',
+    orderProgress: 'Progression de la Commande',
+    orderItems: 'Articles de la Commande',
+    orderPlaced: 'Commande Passée',
+    confirmed: 'Confirmée',
+    preparing: 'En Préparation',
+    ready: 'Prête',
+    inProgress: 'En cours...',
     
     // Spice Levels
     mild: 'Doux',
