@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import type { CartItem, MenuItem } from '@/types/menu';
-import { playAddToCartSound, playRemoveSound } from '@/lib/sounds';
+import { playAddToCartSound, playRemoveSound, haptics } from '@/lib/sounds';
 
 interface CartContextType {
   items: CartItem[];
@@ -19,8 +19,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [items, setItems] = useState<CartItem[]>([]);
 
   const addItem = useCallback((item: MenuItem, quantity = 1, instructions?: string) => {
-    // Play subtle click sound
+    // Play sound and haptic feedback
     playAddToCartSound();
+    haptics.light();
     
     setItems(prev => {
       const existingIndex = prev.findIndex(i => i.id === item.id);
@@ -39,6 +40,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const removeItem = useCallback((itemId: string) => {
     playRemoveSound();
+    haptics.double();
     setItems(prev => prev.filter(item => item.id !== itemId));
   }, []);
 
@@ -47,6 +49,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       removeItem(itemId);
       return;
     }
+    haptics.pulse();
     setItems(prev =>
       prev.map(item =>
         item.id === itemId ? { ...item, quantity } : item
